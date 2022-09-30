@@ -13,9 +13,13 @@ migrateup:
 migratedown:
 	migrate -path db/migration -database "postgresql://root:123456789@localhost:5432/e_wallet_app_v1?sslmode=disable" -verbose down
 
-sqlc:
+sqlc_generate:
 	docker run --rm -v "$(CURDIR):/src" -w //src kjconroy/sqlc generate
+
+sqlc_compile:
+	docker run --rm -v "$(CURDIR):/src" -w //src kjconroy/sqlc compile
 
 test:
 	go test -v -cover ./...
-.PHONY: postgres createdb dropdb migrateup migratedown sqlc test
+
+.PHONY: postgres createdb dropdb migrateup migratedown sqlc_generate sqlc_compile test
