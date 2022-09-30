@@ -7,7 +7,7 @@ WORKDIR /app
 
 # Download necessary Go modules
 COPY go.mod ./
-#COPY go.sum ./
+COPY go.sum ./
 RUN go mod download
 
 COPY . .
