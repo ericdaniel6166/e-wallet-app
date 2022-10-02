@@ -22,4 +22,7 @@ sqlc_compile:
 test:
 	go test -v -cover ./...
 
-.PHONY: postgres createdb dropdb migrateup migratedown sqlc_generate sqlc_compile test
+server:
+	go run main.go
+
+.PHONY: postgres createdb dropdb migrateup migratedown sqlc_generate sqlc_compile test server
