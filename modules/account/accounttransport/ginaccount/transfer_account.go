@@ -20,9 +20,9 @@ func TransferAccount(appCtx component.AppContext) gin.HandlerFunc {
 			return
 		}
 
-		store := accountstore.NewStore(appCtx.GetMainDBConnection())
-		repo := accountrepo.NewTransferAccountRepo(store)
-		biz := accountbiz.NewTransferAccountBiz(repo)
+		store := accountstore.NewSqlStore(appCtx.GetMainDBConnection())
+		repo := accountrepo.NewAccountRepo(store)
+		biz := accountbiz.NewAccountBiz(repo)
 
 		res, err := biz.Transfer(ctx.Request.Context(), &req)
 		if err != nil {

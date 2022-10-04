@@ -20,9 +20,9 @@ func CreateAccount(appCtx component.AppContext) gin.HandlerFunc {
 			return
 		}
 
-		store := accountstore.NewStore(appCtx.GetMainDBConnection())
-		repo := accountrepo.NewCreateAccountRepo(store)
-		biz := accountbiz.NewCreateAccountBiz(repo)
+		store := accountstore.NewSqlStore(appCtx.GetMainDBConnection())
+		repo := accountrepo.NewAccountRepo(store)
+		biz := accountbiz.NewAccountBiz(repo)
 
 		res, err := biz.Create(ctx.Request.Context(), &req)
 		if err != nil {

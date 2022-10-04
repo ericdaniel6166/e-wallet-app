@@ -7,22 +7,13 @@ import (
 	"e-wallet-app/modules/account/accountmodel"
 )
 
-type GetAccountRepo interface {
-	GetById(ctx context.Context, req *accountmodel.GetAccountRequest) (*db.Account, error)
-}
-
-type getAccountBiz struct {
-	repo GetAccountRepo
-}
-
-func NewGetAccountBiz(repo GetAccountRepo) *getAccountBiz {
-	return &getAccountBiz{repo: repo}
-}
-
-func (biz *getAccountBiz) GetById(ctx context.Context, req *accountmodel.GetAccountRequest,
+func (biz *accountBiz) GetById(ctx context.Context, req *accountmodel.GetAccountRequest,
 ) (*db.Account, error) {
 	result, err := biz.repo.GetById(ctx, req)
 	if err != nil {
+		if err == common.RecordNotFound {
+			return nil, common.ErrEntityNotFound(accountmodel.EntityName, err)
+		}
 		return nil, common.ErrCannotGetEntity(accountmodel.EntityName, err)
 	}
 	return result, nil

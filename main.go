@@ -2,26 +2,26 @@ package main
 
 import (
 	"database/sql"
+	"e-wallet-app/appconfig"
 	"e-wallet-app/component"
-	"e-wallet-app/config"
 	"e-wallet-app/middleware"
-	"e-wallet-app/modules/account/accountrouter"
+	"e-wallet-app/routing"
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 	"log"
 )
 
 func main() {
-	appConfig, err := config.LoadConfig(".")
+	config, err := appconfig.LoadConfig(".")
 	if err != nil {
-		log.Fatal("cannot load config:", err)
+		log.Fatal("cannot load app config:", err)
 	}
-	conn, err := sql.Open(appConfig.DBDriver, appConfig.DBSource)
+	conn, err := sql.Open(config.DBDriver, config.DBSource)
 	if err != nil {
 		log.Fatal("cannot connect to db:", err)
 	}
 
-	appCtx := component.NewAppContext(conn, appConfig.Version, appConfig.HttpServerAddress)
+	appCtx := component.NewAppContext(conn, config.Version, config.HttpServerAddress)
 
 	if err := runService(appCtx); err != nil {
 		log.Fatalln(err)
@@ -30,9 +30,13 @@ func main() {
 }
 
 func runService(appCtx component.AppContext) error {
-	router := gin.Default()
-	router.Use(middleware.Recover(appCtx))
-	versionRouter := router.Group(appCtx.Version())
-	accountrouter.AccountRouter(appCtx, versionRouter)
-	return router.Run(appCtx.HttpServerAddress())
+	r := gin.Default()
+	r.Use(middleware.Recover(appCtx))
+
+	v := r.Group(appCtx.Version())
+
+	routing.AccountRouter(appCtx, v)
+
+	return r.Run(appCtx.HttpServerAddress())
+
 }

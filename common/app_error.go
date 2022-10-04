@@ -25,6 +25,16 @@ func NewBadRequestResponse(root error, msg, log, key string) *AppError {
 	}
 }
 
+func NewNotFoundResponse(root error, msg, log, key string) *AppError {
+	return &AppError{
+		StatusCode: http.StatusNotFound,
+		RootErr:    root,
+		Message:    msg,
+		Log:        log,
+		Key:        key,
+	}
+}
+
 func NewInternalServerErrorResponse(root error, msg, log, key string) *AppError {
 	return &AppError{
 		StatusCode: http.StatusInternalServerError,
@@ -75,21 +85,22 @@ func (e *AppError) Error() string {
 }
 
 func ErrDB(err error) *AppError {
-	return NewInternalServerErrorResponse(err, "something went wrong with DB", err.Error(), "DB_ERROR")
+	return NewInternalServerErrorResponse(err, "Something went wrong with DB", err.Error(), "DB_ERROR")
 }
 
 func ErrInvalidRequest(err error) *AppError {
-	return NewBadRequestResponse(err, "invalid request", err.Error(), "ErrInvalidRequest")
+	return NewBadRequestResponse(err, "Invalid request", err.Error(), "ErrInvalidRequest")
 }
 
 func ErrInternal(err error) *AppError {
-	return NewInternalServerErrorResponse(err, "something went wrong in the server", err.Error(), "ErrInternal")
+	return NewInternalServerErrorResponse(err, "Something went wrong in the server", err.Error(), "ErrInternal")
 }
 
 func ErrCannotListEntity(entity string, err error) *AppError {
-	return NewCustomError(
+	return NewInternalServerErrorResponse(
 		err,
 		fmt.Sprintf("Cannot list %s", strings.ToLower(entity)),
+		err.Error(),
 		fmt.Sprintf("ErrCannotList%s", entity),
 	)
 }
@@ -115,6 +126,15 @@ func ErrCannotGetEntity(entity string, err error) *AppError {
 		err,
 		fmt.Sprintf("Cannot get %s", strings.ToLower(entity)),
 		fmt.Sprintf("ErrCannotGet%s", entity),
+	)
+}
+
+func ErrEntityNotFound(entity string, err error) *AppError {
+	return NewNotFoundResponse(
+		err,
+		fmt.Sprintf("%s not found", entity),
+		err.Error(),
+		fmt.Sprintf("Err%sNotFound", entity),
 	)
 }
 
