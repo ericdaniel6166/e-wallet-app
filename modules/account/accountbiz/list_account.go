@@ -7,19 +7,7 @@ import (
 	"e-wallet-app/modules/account/accountmodel"
 )
 
-type ListAccountRepo interface {
-	List(ctx context.Context, req *accountmodel.ListAccountRequest) ([]db.Account, error)
-}
-
-type listAccountBiz struct {
-	repo ListAccountRepo
-}
-
-func NewListAccountBiz(repo ListAccountRepo) *listAccountBiz {
-	return &listAccountBiz{repo: repo}
-}
-
-func (biz *listAccountBiz) List(
+func (biz *accountBiz) List(
 	ctx context.Context, req *accountmodel.ListAccountRequest) ([]db.Account, error) {
 	accounts, err := biz.repo.List(ctx, req)
 	if err != nil {

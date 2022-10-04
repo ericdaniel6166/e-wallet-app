@@ -5,16 +5,13 @@ import (
 	db "e-wallet-app/db/sqlc"
 )
 
-// store provides all functions to execute sqlDB queries and transactions
-type store struct {
+// sqlStore provides all functions to execute sqlDB queries and transactions
+type sqlStore struct {
 	*db.Queries
-	sqlDB *sql.DB
+	db *sql.DB
 }
 
-// NewStore returns a new instance of Store
-func NewStore(sqlDB *sql.DB) *store {
-	return &store{
-		Queries: db.New(sqlDB),
-		sqlDB:   sqlDB,
-	}
+// NewSqlStore returns a new instance of sqlStore
+func NewSqlStore(store *sql.DB) *sqlStore {
+	return &sqlStore{Queries: db.New(store), db: store}
 }

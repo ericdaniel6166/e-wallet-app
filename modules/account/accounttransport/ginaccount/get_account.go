@@ -20,13 +20,13 @@ func GetAccount(appCtx component.AppContext) gin.HandlerFunc {
 			return
 		}
 
-		store := accountstore.NewStore(appCtx.GetMainDBConnection())
-		repo := accountrepo.NewGetAccountRepo(store)
-		biz := accountbiz.NewGetAccountBiz(repo)
+		store := accountstore.NewSqlStore(appCtx.GetMainDBConnection())
+		repo := accountrepo.NewAccountRepo(store)
+		biz := accountbiz.NewAccountBiz(repo)
 
 		res, err := biz.GetById(ctx.Request.Context(), &req)
 		if err != nil {
-			panic(common.ErrInternal(err))
+			panic(err)
 			return
 		}
 

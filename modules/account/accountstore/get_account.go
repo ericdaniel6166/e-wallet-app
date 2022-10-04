@@ -8,7 +8,7 @@ import (
 	"e-wallet-app/modules/account/accountmodel"
 )
 
-func (store *store) GetById(ctx context.Context, req *accountmodel.GetAccountRequest) (*db.Account, error) {
+func (store *sqlStore) GetById(ctx context.Context, req *accountmodel.GetAccountRequest) (*db.Account, error) {
 	account, err := store.GetAccount(ctx, req.ID)
 	if err != nil {
 		if err == sql.ErrNoRows {

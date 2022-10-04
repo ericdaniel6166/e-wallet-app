@@ -22,15 +22,15 @@ func ListAccount(appCtx component.AppContext) gin.HandlerFunc {
 		}
 		paging.FillDefault()
 
-		store := accountstore.NewStore(appCtx.GetMainDBConnection())
-		repo := accountrepo.NewListAccountRepo(store)
-		biz := accountbiz.NewListAccountBiz(repo)
+		store := accountstore.NewSqlStore(appCtx.GetMainDBConnection())
+		repo := accountrepo.NewAccountRepo(store)
+		biz := accountbiz.NewAccountBiz(repo)
 
 		req.Paging = &paging
 
 		res, err := biz.List(ctx.Request.Context(), &req)
 		if err != nil {
-			panic(common.ErrInternal(err))
+			panic(err)
 			return
 		}
 

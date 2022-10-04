@@ -7,7 +7,7 @@ import (
 	"e-wallet-app/modules/account/accountmodel"
 )
 
-func (store *store) Create(ctx context.Context, req *accountmodel.CreateAccountRequest) (*db.Account, error) {
+func (store *sqlStore) Create(ctx context.Context, req *accountmodel.CreateAccountRequest) (*db.Account, error) {
 	account, err := store.CreateAccount(ctx, db.CreateAccountParams{
 		Owner:    req.Owner,
 		Currency: req.Currency.String(),

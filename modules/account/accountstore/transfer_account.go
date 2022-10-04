@@ -8,10 +8,10 @@ import (
 	"log"
 )
 
-func (store *store) Transfer(ctx context.Context, req *accountmodel.TransferAccountRequest,
+func (store *sqlStore) Transfer(ctx context.Context, req *accountmodel.TransferAccountRequest,
 ) (*accountmodel.TransferAccountResponse, error) {
 
-	tx, err := store.sqlDB.Begin()
+	tx, err := store.db.Begin()
 	if err != nil {
 		return nil, err
 	}
@@ -26,9 +26,9 @@ func (store *store) Transfer(ctx context.Context, req *accountmodel.TransferAcco
 
 	qtx := store.Queries.WithTx(tx)
 
-	var result accountmodel.TransferAccountResponse
+	var res accountmodel.TransferAccountResponse
 
-	result.Transfer, err = qtx.CreateTransfer(ctx, db.CreateTransferParams{
+	res.Transfer, err = qtx.CreateTransfer(ctx, db.CreateTransferParams{
 		FromAccountID: req.FromAccountID,
 		ToAccountID:   req.ToAccountID,
 		Amount:        req.Amount,
@@ -37,7 +37,7 @@ func (store *store) Transfer(ctx context.Context, req *accountmodel.TransferAcco
 		return nil, err
 	}
 
-	result.FromEntry, err = qtx.CreateEntry(ctx, db.CreateEntryParams{
+	res.FromEntry, err = qtx.CreateEntry(ctx, db.CreateEntryParams{
 		AccountID: req.FromAccountID,
 		Amount:    -req.Amount,
 	})
@@ -45,7 +45,7 @@ func (store *store) Transfer(ctx context.Context, req *accountmodel.TransferAcco
 		return nil, err
 	}
 
-	result.ToEntry, err = qtx.CreateEntry(ctx, db.CreateEntryParams{
+	res.ToEntry, err = qtx.CreateEntry(ctx, db.CreateEntryParams{
 		AccountID: req.ToAccountID,
 		Amount:    req.Amount,
 	})
@@ -54,10 +54,10 @@ func (store *store) Transfer(ctx context.Context, req *accountmodel.TransferAcco
 	}
 
 	if req.FromAccountID < req.ToAccountID {
-		result.FromAccount, result.ToAccount, err = addMoney(ctx, qtx,
+		res.FromAccount, res.ToAccount, err = addMoney(ctx, qtx,
 			req.FromAccountID, -req.Amount, req.ToAccountID, req.Amount)
 	} else {
-		result.ToAccount, result.FromAccount, err = addMoney(ctx, qtx,
+		res.ToAccount, res.FromAccount, err = addMoney(ctx, qtx,
 			req.ToAccountID, req.Amount, req.FromAccountID, -req.Amount)
 	}
 
@@ -66,7 +66,7 @@ func (store *store) Transfer(ctx context.Context, req *accountmodel.TransferAcco
 		return nil, err
 	}
 
-	return &result, nil
+	return &res, nil
 }
 
 func addMoney(ctx context.Context, qtx *db.Queries, accountID1 int64, amount1 int64, accountID2 int64, amount2 int64,
