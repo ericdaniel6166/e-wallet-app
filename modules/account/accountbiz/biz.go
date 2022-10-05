@@ -10,7 +10,7 @@ import (
 type AccountRepo interface {
 	Create(ctx context.Context, req *accountmodel.CreateAccountRequest) (*db.Account, error)
 	GetById(ctx context.Context, req *accountmodel.GetAccountRequest) (*db.Account, error)
-	List(ctx context.Context, req *accountmodel.ListAccountRequest) ([]db.Account, error)
+	List(ctx context.Context, req *accountmodel.ListAccountRequest) (*accountmodel.ListAccountResponse, error)
 	Transfer(ctx context.Context, req *accountmodel.TransferAccountRequest,
 	) (*accountmodel.TransferAccountResponse, error)
 }

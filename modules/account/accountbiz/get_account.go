@@ -9,12 +9,12 @@ import (
 
 func (biz *accountBiz) GetById(ctx context.Context, req *accountmodel.GetAccountRequest,
 ) (*db.Account, error) {
-	result, err := biz.repo.GetById(ctx, req)
+	account, err := biz.repo.GetById(ctx, req)
 	if err != nil {
 		if err == common.RecordNotFound {
 			return nil, common.ErrEntityNotFound(accountmodel.EntityName, err)
 		}
 		return nil, common.ErrCannotGetEntity(accountmodel.EntityName, err)
 	}
-	return result, nil
+	return account, nil
 }

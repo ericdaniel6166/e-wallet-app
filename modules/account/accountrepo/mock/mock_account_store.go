@@ -67,10 +67,10 @@ func (mr *MockAccountStoreMockRecorder) GetById(arg0, arg1 interface{}) *gomock.
 }
 
 // List mocks base method.
-func (m *MockAccountStore) List(arg0 context.Context, arg1 *accountmodel.ListAccountRequest) ([]db.Account, error) {
+func (m *MockAccountStore) List(arg0 context.Context, arg1 *accountmodel.ListAccountRequest) (*accountmodel.ListAccountResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "List", arg0, arg1)
-	ret0, _ := ret[0].([]db.Account)
+	ret0, _ := ret[0].(*accountmodel.ListAccountResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

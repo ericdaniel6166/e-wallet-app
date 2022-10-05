@@ -46,7 +46,7 @@ func TestGetById(t *testing.T) {
 			},
 			expect: func(t *testing.T, actual *db.Account, err error) {
 				require.Nil(t, actual)
-				require.EqualError(t, err, common.ErrCannotGetEntity(accountmodel.EntityName, err).Error())
+				require.EqualError(t, err, common.ErrEntityNotFound(accountmodel.EntityName, common.RecordNotFound).Error())
 			},
 		},
 		{
@@ -57,7 +57,7 @@ func TestGetById(t *testing.T) {
 			},
 			expect: func(t *testing.T, actual *db.Account, err error) {
 				require.Nil(t, actual)
-				require.EqualError(t, err, common.ErrCannotGetEntity(accountmodel.EntityName, err).Error())
+				require.EqualError(t, err, common.ErrCannotGetEntity(accountmodel.EntityName, common.ErrDB(errors.New("error db"))).Error())
 			},
 		},
 	}

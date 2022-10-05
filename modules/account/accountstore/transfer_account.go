@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	db "e-wallet-app/db/sqlc"
 	"e-wallet-app/modules/account/accountmodel"
+	"github.com/shopspring/decimal"
 	"log"
 )
 
@@ -39,7 +40,7 @@ func (store *sqlStore) Transfer(ctx context.Context, req *accountmodel.TransferA
 
 	res.FromEntry, err = qtx.CreateEntry(ctx, db.CreateEntryParams{
 		AccountID: req.FromAccountID,
-		Amount:    -req.Amount,
+		Amount:    req.Amount.Neg(),
 	})
 	if err != nil {
 		return nil, err
@@ -55,10 +56,10 @@ func (store *sqlStore) Transfer(ctx context.Context, req *accountmodel.TransferA
 
 	if req.FromAccountID < req.ToAccountID {
 		res.FromAccount, res.ToAccount, err = addMoney(ctx, qtx,
-			req.FromAccountID, -req.Amount, req.ToAccountID, req.Amount)
+			req.FromAccountID, req.Amount.Neg(), req.ToAccountID, req.Amount)
 	} else {
 		res.ToAccount, res.FromAccount, err = addMoney(ctx, qtx,
-			req.ToAccountID, req.Amount, req.FromAccountID, -req.Amount)
+			req.ToAccountID, req.Amount, req.FromAccountID, req.Amount.Neg())
 	}
 
 	err = tx.Commit()
@@ -69,7 +70,7 @@ func (store *sqlStore) Transfer(ctx context.Context, req *accountmodel.TransferA
 	return &res, nil
 }
 
-func addMoney(ctx context.Context, qtx *db.Queries, accountID1 int64, amount1 int64, accountID2 int64, amount2 int64,
+func addMoney(ctx context.Context, qtx *db.Queries, accountID1 int64, amount1 decimal.Decimal, accountID2 int64, amount2 decimal.Decimal,
 ) (account1, account2 db.Account, err error) {
 	account1, err = qtx.AddAccountBalance(ctx, db.AddAccountBalanceParams{
 		ID:     accountID1,
