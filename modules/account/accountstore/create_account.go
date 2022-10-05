@@ -9,8 +9,9 @@ import (
 
 func (store *sqlStore) Create(ctx context.Context, req *accountmodel.CreateAccountRequest) (*db.Account, error) {
 	account, err := store.CreateAccount(ctx, db.CreateAccountParams{
-		Owner:    req.Owner,
-		Currency: req.Currency.String(),
+		UserID:      req.UserID,
+		Balance:     req.Balance,
+		AccountType: req.AccountType.String(),
 	})
 	if err != nil {
 		return nil, common.ErrDB(err)

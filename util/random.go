@@ -1,6 +1,7 @@
 package util
 
 import (
+	"github.com/shopspring/decimal"
 	"math/rand"
 	"strings"
 	"time"
@@ -12,10 +13,14 @@ func init() {
 	rand.Seed(time.Now().UnixNano())
 }
 
-// RandomInt returns a random integer between min and max
+// RandomInt returns a random integer in the half-open interval [min,max)
 func RandomInt(min, max int64) int64 {
-	return min + rand.Int63n(max-min+1)
+	return min + rand.Int63n(max-min)
+}
 
+// RandomFloat returns a random float in the half-open interval [min,max)
+func RandomFloat(min, max float64) float64 {
+	return min + rand.Float64()*(max-min)
 }
 
 // RandomString returns a random string with length n
@@ -29,18 +34,7 @@ func RandomString(n int) string {
 	return strBuilder.String()
 }
 
-// RandomOwner returns a random owner name
-func RandomOwner() string {
-	return RandomString(6)
-}
-
 // RandomMoney generates a random amount of money
-func RandomMoney() int64 {
-	return RandomInt(0, 1000)
-}
-
-func RandomCurrency() string {
-	currencies := []string{"EUR", "USD", "CAD"}
-	lenCurrencies := len(currencies)
-	return currencies[rand.Intn(lenCurrencies)]
+func RandomMoney() decimal.Decimal {
+	return decimal.NewFromFloat(RandomFloat(1000, 10000))
 }

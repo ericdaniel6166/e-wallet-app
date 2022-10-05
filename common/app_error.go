@@ -55,11 +55,22 @@ func NewFullErrorResponse(statusCode int, root error, msg, log, key string) *App
 	}
 }
 
-func NewUnauthorized(root error, msg, key string) *AppError {
+func NewUnauthorized(root error, msg, log, key string) *AppError {
 	return &AppError{
 		StatusCode: http.StatusUnauthorized,
 		RootErr:    root,
 		Message:    msg,
+		Log:        log,
+		Key:        key,
+	}
+}
+
+func NewForbidden(root error, msg, log, key string) *AppError {
+	return &AppError{
+		StatusCode: http.StatusForbidden,
+		RootErr:    root,
+		Message:    msg,
+		Log:        log,
 		Key:        key,
 	}
 }
@@ -85,15 +96,21 @@ func (e *AppError) Error() string {
 }
 
 func ErrDB(err error) *AppError {
-	return NewInternalServerErrorResponse(err, "Something went wrong with DB", err.Error(), "DB_ERROR")
+	return NewInternalServerErrorResponse(err, "Something went wrong with DB",
+		err.Error(), "DB_ERROR")
 }
 
 func ErrInvalidRequest(err error) *AppError {
 	return NewBadRequestResponse(err, "Invalid request", err.Error(), "ErrInvalidRequest")
 }
 
+func ErrMapping(err error) *AppError {
+	return NewInternalServerErrorResponse(err, "Error mapping", err.Error(), "ErrMapping")
+}
+
 func ErrInternal(err error) *AppError {
-	return NewInternalServerErrorResponse(err, "Something went wrong in the server", err.Error(), "ErrInternal")
+	return NewInternalServerErrorResponse(err, "Something went wrong in the server",
+		err.Error(), "ErrInternal")
 }
 
 func ErrCannotListEntity(entity string, err error) *AppError {
@@ -147,17 +164,18 @@ func ErrEntityExisted(entity string, err error) *AppError {
 }
 
 func ErrCannotCreateEntity(entity string, err error) *AppError {
-	return NewCustomError(
-		err,
-		fmt.Sprintf("Cannot Create %s", strings.ToLower(entity)),
-		fmt.Sprintf("ErrCannotCreate%s", entity),
-	)
+	return NewInternalServerErrorResponse(err,
+		fmt.Sprintf("Cannot create %s", strings.ToLower(entity)),
+		err.Error(), fmt.Sprintf("ErrCannotCreate%s", entity))
 }
 
 func ErrNoPermission(err error) *AppError {
-	return NewCustomError(
-		err,
-		fmt.Sprintf("You have no permission"),
-		fmt.Sprintf("ErrNoPermission"),
-	)
+	return NewForbidden(err, fmt.Sprintf("You have no permission"),
+		err.Error(), fmt.Sprintf("ErrNoPermission"))
+}
+
+func ErrUnauthorized(err error) *AppError {
+	return NewUnauthorized(err,
+		fmt.Sprintf("Access is denied due to invaid credentials"),
+		err.Error(), fmt.Sprintf("ErrUnauthorized"))
 }

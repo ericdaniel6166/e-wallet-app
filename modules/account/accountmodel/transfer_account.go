@@ -1,11 +1,14 @@
 package accountmodel
 
-import db "e-wallet-app/db/sqlc"
+import (
+	db "e-wallet-app/db/sqlc"
+	"github.com/shopspring/decimal"
+)
 
 type TransferAccountRequest struct {
-	FromAccountID int64 `json:"from_account_id" binding:"required"`
-	ToAccountID   int64 `json:"to_account_id" binding:"required"`
-	Amount        int64 `json:"amount" binding:"required"`
+	FromAccountID int64           `json:"from_account_id" binding:"required"`
+	ToAccountID   int64           `json:"to_account_id" binding:"required"`
+	Amount        decimal.Decimal `json:"amount" binding:"required"`
 }
 
 type TransferAccountResponse struct {

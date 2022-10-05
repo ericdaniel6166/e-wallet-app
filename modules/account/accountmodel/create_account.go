@@ -1,8 +1,11 @@
 package accountmodel
 
-import "e-wallet-app/common/enum"
+import (
+	"github.com/shopspring/decimal"
+)
 
 type CreateAccountRequest struct {
-	Owner    string        `json:"owner" binding:"required"`
-	Currency enum.Currency `json:"currency" binding:"required"`
+	UserID      int64           `json:"user_id" binding:"required"`
+	Balance     decimal.Decimal `json:"balance" binding:"required"`
+	AccountType AccountType     `json:"account_type" binding:"required"`
 }
