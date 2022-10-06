@@ -28,13 +28,13 @@ func ListAccount(appCtx component.AppContext) gin.HandlerFunc {
 
 		req.Paging = &paging
 
-		accounts, err := biz.List(ctx.Request.Context(), &req)
+		result, err := biz.List(ctx.Request.Context(), &req)
 		if err != nil {
 			panic(err)
 			return
 		}
 
-		res := accountmodel.MapAccounts(accounts.Accounts)
+		res := accountmodel.MapAccounts(result.Accounts)
 
 		ctx.JSON(http.StatusOK, common.FullSuccessResponse(res, &paging, nil))
 	}

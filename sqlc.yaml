@@ -15,3 +15,6 @@ packages:
 overrides:
     - go_type: "github.com/shopspring/decimal.Decimal"
       db_type: "pg_catalog.numeric"
+    - column: "accounts.account_type"
+      go_type: "e-wallet-app/modules/account/accountenum.AccountType"
+

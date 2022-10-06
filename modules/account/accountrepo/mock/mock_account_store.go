@@ -6,7 +6,6 @@ package mockaccountstore
 
 import (
 	context "context"
-	db "e-wallet-app/db/sqlc"
 	accountmodel "e-wallet-app/modules/account/accountmodel"
 	reflect "reflect"
 
@@ -37,10 +36,10 @@ func (m *MockAccountStore) EXPECT() *MockAccountStoreMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockAccountStore) Create(arg0 context.Context, arg1 *accountmodel.CreateAccountRequest) (*db.Account, error) {
+func (m *MockAccountStore) Create(arg0 context.Context, arg1 *accountmodel.CreateAccountRequest) (*accountmodel.CreateAccountResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Create", arg0, arg1)
-	ret0, _ := ret[0].(*db.Account)
+	ret0, _ := ret[0].(*accountmodel.CreateAccountResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -52,10 +51,10 @@ func (mr *MockAccountStoreMockRecorder) Create(arg0, arg1 interface{}) *gomock.C
 }
 
 // GetById mocks base method.
-func (m *MockAccountStore) GetById(arg0 context.Context, arg1 *accountmodel.GetAccountRequest) (*db.Account, error) {
+func (m *MockAccountStore) GetById(arg0 context.Context, arg1 *accountmodel.GetAccountRequest) (*accountmodel.GetAccountResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetById", arg0, arg1)
-	ret0, _ := ret[0].(*db.Account)
+	ret0, _ := ret[0].(*accountmodel.GetAccountResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

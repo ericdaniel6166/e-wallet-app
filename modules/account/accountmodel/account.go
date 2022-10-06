@@ -3,28 +3,18 @@ package accountmodel
 import (
 	"e-wallet-app/common"
 	db "e-wallet-app/db/sqlc"
+	"e-wallet-app/modules/account/accountenum"
 )
 
 const (
 	EntityName = "Account"
 )
 
-//go:generate enumer -type=AccountType -json -sql -transform=snake-upper -output=account_type_enumer.go
-type AccountType int32
-
-const (
-	CheckingAccount AccountType = iota + 1
-	SavingsAccount
-	CDAccount
-	IRAAccount
-	BrokerageAccount
-)
-
 type AccountResponse struct {
 	common.SQLModel `json:",inline"`
-	UserID          int64   `json:"user_id"`
-	Balance         float64 `json:"balance"`
-	AccountType     string  `json:"account_type"`
+	UserID          int64                   `json:"user_id"`
+	Balance         float64                 `json:"balance"`
+	AccountType     accountenum.AccountType `json:"account_type"`
 }
 
 func MapAccount(account *db.Account) AccountResponse {

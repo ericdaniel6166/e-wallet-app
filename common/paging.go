@@ -6,12 +6,12 @@ type Paging struct {
 	Total      int64 `json:"total,omitempty" form:"total" binding:"omitempty"`
 }
 
-func (paging *Paging) FillDefault() {
-	if paging.PageNumber == 0 {
-		paging.PageNumber = 1
+func (p *Paging) FillDefault() {
+	if p.PageNumber == 0 {
+		p.PageNumber = 1
 	}
 
-	if paging.PageSize == 0 {
-		paging.PageSize = 10
+	if p.PageSize == 0 {
+		p.PageSize = 10
 	}
 }

@@ -6,12 +6,14 @@ package db
 
 import (
 	"context"
+
+	"e-wallet-app/modules/account/accountenum"
 )
 
 type Querier interface {
 	AddAccountBalance(ctx context.Context, arg AddAccountBalanceParams) (Account, error)
 	CountAccounts(ctx context.Context) (int64, error)
-	CountAccountsByAccountType(ctx context.Context, accountType string) (int64, error)
+	CountAccountsByAccountType(ctx context.Context, accountType accountenum.AccountType) (int64, error)
 	CreateAccount(ctx context.Context, arg CreateAccountParams) (Account, error)
 	CreateEntry(ctx context.Context, arg CreateEntryParams) (Entry, error)
 	CreateTransfer(ctx context.Context, arg CreateTransferParams) (Transfer, error)

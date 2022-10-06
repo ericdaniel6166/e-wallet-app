@@ -8,6 +8,7 @@ package db
 import (
 	"context"
 
+	"e-wallet-app/modules/account/accountenum"
 	"github.com/shopspring/decimal"
 )
 
@@ -56,7 +57,7 @@ FROM accounts
 WHERE account_type = $1
 `
 
-func (q *Queries) CountAccountsByAccountType(ctx context.Context, accountType string) (int64, error) {
+func (q *Queries) CountAccountsByAccountType(ctx context.Context, accountType accountenum.AccountType) (int64, error) {
 	row := q.db.QueryRowContext(ctx, countAccountsByAccountType, accountType)
 	var count int64
 	err := row.Scan(&count)
@@ -72,9 +73,9 @@ RETURNING id, user_id, status, balance, account_type, created_at, updated_at
 `
 
 type CreateAccountParams struct {
-	UserID      int64           `json:"user_id"`
-	Balance     decimal.Decimal `json:"balance"`
-	AccountType string          `json:"account_type"`
+	UserID      int64                   `json:"user_id"`
+	Balance     decimal.Decimal         `json:"balance"`
+	AccountType accountenum.AccountType `json:"account_type"`
 }
 
 func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (Account, error) {
@@ -187,9 +188,9 @@ LIMIT $2 OFFSET $3
 `
 
 type ListAccountsByAccountTypeParams struct {
-	AccountType string `json:"account_type"`
-	Limit       int32  `json:"limit"`
-	Offset      int32  `json:"offset"`
+	AccountType accountenum.AccountType `json:"account_type"`
+	Limit       int32                   `json:"limit"`
+	Offset      int32                   `json:"offset"`
 }
 
 func (q *Queries) ListAccountsByAccountType(ctx context.Context, arg ListAccountsByAccountTypeParams) ([]Account, error) {
@@ -295,8 +296,8 @@ RETURNING id, user_id, status, balance, account_type, created_at, updated_at
 `
 
 type UpdateAccountTypeParams struct {
-	ID          int64  `json:"id"`
-	AccountType string `json:"account_type"`
+	ID          int64                   `json:"id"`
+	AccountType accountenum.AccountType `json:"account_type"`
 }
 
 func (q *Queries) UpdateAccountType(ctx context.Context, arg UpdateAccountTypeParams) (Account, error) {
