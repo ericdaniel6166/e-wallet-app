@@ -7,17 +7,18 @@ package db
 import (
 	"time"
 
+	"e-wallet-app/modules/account/accountenum"
 	"github.com/shopspring/decimal"
 )
 
 type Account struct {
-	ID          int64           `json:"id"`
-	UserID      int64           `json:"user_id"`
-	Status      bool            `json:"status"`
-	Balance     decimal.Decimal `json:"balance"`
-	AccountType string          `json:"account_type"`
-	CreatedAt   time.Time       `json:"created_at"`
-	UpdatedAt   time.Time       `json:"updated_at"`
+	ID          int64                   `json:"id"`
+	UserID      int64                   `json:"user_id"`
+	Status      bool                    `json:"status"`
+	Balance     decimal.Decimal         `json:"balance"`
+	AccountType accountenum.AccountType `json:"account_type"`
+	CreatedAt   time.Time               `json:"created_at"`
+	UpdatedAt   time.Time               `json:"updated_at"`
 }
 
 type Entry struct {

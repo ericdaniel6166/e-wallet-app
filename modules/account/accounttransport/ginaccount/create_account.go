@@ -24,13 +24,13 @@ func CreateAccount(appCtx component.AppContext) gin.HandlerFunc {
 		repo := accountrepo.NewAccountRepo(store)
 		biz := accountbiz.NewAccountBiz(repo)
 
-		account, err := biz.Create(ctx.Request.Context(), &req)
+		result, err := biz.Create(ctx.Request.Context(), &req)
 		if err != nil {
 			panic(err)
 			return
 		}
 
-		res := accountmodel.MapAccount(account)
+		res := accountmodel.MapAccount(result.Account)
 
 		ctx.JSON(http.StatusOK, common.SuccessResponse(&res))
 	}

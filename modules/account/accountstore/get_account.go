@@ -4,11 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"e-wallet-app/common"
-	db "e-wallet-app/db/sqlc"
 	"e-wallet-app/modules/account/accountmodel"
 )
 
-func (store *sqlStore) GetById(ctx context.Context, req *accountmodel.GetAccountRequest) (*db.Account, error) {
+func (store *sqlStore) GetById(ctx context.Context, req *accountmodel.GetAccountRequest) (*accountmodel.GetAccountResponse, error) {
+	var res accountmodel.GetAccountResponse
 	account, err := store.GetAccount(ctx, req.ID)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -16,5 +16,6 @@ func (store *sqlStore) GetById(ctx context.Context, req *accountmodel.GetAccount
 		}
 		return nil, common.ErrDB(err)
 	}
-	return &account, nil
+	res.Account = &account
+	return &res, nil
 }

@@ -1,11 +1,15 @@
 package accountmodel
 
-import (
-	"github.com/shopspring/decimal"
-)
+import db "e-wallet-app/db/sqlc"
+
+type CreateAccount struct {
+	*db.Account
+}
 
 type CreateAccountRequest struct {
-	UserID      int64           `json:"user_id" binding:"required"`
-	Balance     decimal.Decimal `json:"balance" binding:"required"`
-	AccountType AccountType     `json:"account_type" binding:"required"`
+	*db.Account
+}
+
+type CreateAccountResponse struct {
+	*db.Account
 }
