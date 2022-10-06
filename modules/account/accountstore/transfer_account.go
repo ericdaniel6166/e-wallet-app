@@ -19,7 +19,7 @@ func (store *sqlStore) Transfer(ctx context.Context, req *accountmodel.TransferA
 	defer func(tx *sql.Tx) {
 		errRb := tx.Rollback()
 		if errRb != nil {
-			log.Printf("transfer transaction: %v", errRb.Error())
+			log.Printf("transfer transaction: %s", errRb.Error())
 			return
 		}
 		return
