@@ -1,0 +1,22 @@
+##### Framework/Library
+- Gin
+  - HTTP web framework
+- sqlc
+  - generate idiomatic Golang codes, which uses the standard database/sql library
+  - catch SQL errors before generating codes (sqlx failure won't occur until runtime)
+  - only full supports Postgres
+- golang-migrate
+  - database migration
+- enumer
+  - generate Go code that adds useful methods to Go enums
+- mapstructure
+  - decoding generic map values to structures and vice versa, while providing helpful error handling
+- decimal
+  - Arbitrary-precision fixed-point decimal numbers in go.
+- Viper
+  - Viper is a complete configuration solution for Go applications
+- testify
+  - Unit test
+- gomock
+  - mocking framework
+- CI (Github Actions)
