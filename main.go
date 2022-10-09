@@ -1,7 +1,42 @@
 package main
 
-import "fmt"
+import (
+	"database/sql"
+	"e-wallet-app/appconfig"
+	"e-wallet-app/component"
+	"e-wallet-app/middleware"
+	"e-wallet-app/routing"
+	"github.com/gin-gonic/gin"
+	_ "github.com/lib/pq"
+	"log"
+)
 
 func main() {
-	fmt.Println("Hello World!")
+	config, err := appconfig.LoadConfig(".")
+	if err != nil {
+		log.Fatal("cannot load app config:", err)
+	}
+	conn, err := sql.Open(config.DBDriver, config.DBSource)
+	if err != nil {
+		log.Fatal("cannot connect to db:", err)
+	}
+
+	appCtx := component.NewAppContext(conn, config.Version, config.HttpServerAddress)
+
+	if err := runService(appCtx); err != nil {
+		log.Fatalln(err)
+	}
+
+}
+
+func runService(appCtx component.AppContext) error {
+	r := gin.Default()
+	r.Use(middleware.Recover(appCtx))
+
+	v := r.Group(appCtx.Version())
+
+	routing.AccountRouter(appCtx, v)
+
+	return r.Run(appCtx.HttpServerAddress())
+
 }

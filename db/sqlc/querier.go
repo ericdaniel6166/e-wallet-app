@@ -6,22 +6,28 @@ package db
 
 import (
 	"context"
+
+	"e-wallet-app/modules/account/accountenum"
 )
 
 type Querier interface {
 	AddAccountBalance(ctx context.Context, arg AddAccountBalanceParams) (Account, error)
+	CountAccounts(ctx context.Context) (int64, error)
+	CountAccountsByAccountType(ctx context.Context, accountType accountenum.AccountType) (int64, error)
 	CreateAccount(ctx context.Context, arg CreateAccountParams) (Account, error)
 	CreateEntry(ctx context.Context, arg CreateEntryParams) (Entry, error)
 	CreateTransfer(ctx context.Context, arg CreateTransferParams) (Transfer, error)
-	DeleteAccount(ctx context.Context, id int64) error
 	GetAccount(ctx context.Context, id int64) (Account, error)
 	GetAccountForUpdate(ctx context.Context, id int64) (Account, error)
 	GetEntry(ctx context.Context, id int64) (Entry, error)
 	GetTransfer(ctx context.Context, id int64) (Transfer, error)
 	ListAccounts(ctx context.Context, arg ListAccountsParams) ([]Account, error)
+	ListAccountsByAccountType(ctx context.Context, arg ListAccountsByAccountTypeParams) ([]Account, error)
+	ListAccountsByUser(ctx context.Context, userID int64) ([]Account, error)
 	ListEntries(ctx context.Context, arg ListEntriesParams) ([]Entry, error)
 	ListTransfers(ctx context.Context, arg ListTransfersParams) ([]Transfer, error)
-	UpdateAccount(ctx context.Context, arg UpdateAccountParams) (Account, error)
+	UpdateAccountStatus(ctx context.Context, arg UpdateAccountStatusParams) (Account, error)
+	UpdateAccountType(ctx context.Context, arg UpdateAccountTypeParams) (Account, error)
 }
 
 var _ Querier = (*Queries)(nil)
