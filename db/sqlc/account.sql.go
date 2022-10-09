@@ -15,7 +15,8 @@ import (
 
 const addAccountBalanceByAccountNumber = `-- name: AddAccountBalanceByAccountNumber :one
 UPDATE accounts
-SET balance = balance + $2
+SET balance = balance + $2,
+updated_at = now()
 WHERE account_number = $1
 RETURNING id, username, account_number, status, balance, account_type, created_at, updated_at
 `
@@ -43,7 +44,8 @@ func (q *Queries) AddAccountBalanceByAccountNumber(ctx context.Context, arg AddA
 
 const addAccountBalanceByID = `-- name: AddAccountBalanceByID :one
 UPDATE accounts
-SET balance = balance + $2
+SET balance = balance + $2,
+updated_at = now()
 WHERE id = $1
 RETURNING id, username, account_number, status, balance, account_type, created_at, updated_at
 `
@@ -275,7 +277,8 @@ SET
 status = coalesce($2, status),
 account_type = coalesce($3, account_type),
 account_number = coalesce($4, account_number),
-username = coalesce($5, username)
+username = coalesce($5, username),
+updated_at = now()
 WHERE id = $1
 RETURNING id, username, account_number, status, balance, account_type, created_at, updated_at
 `
