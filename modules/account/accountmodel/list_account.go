@@ -1,15 +1,11 @@
 package accountmodel
 
 import (
-	"e-wallet-app/common"
-	db "e-wallet-app/db/sqlc"
+	"e-wallet-app/modules/account/accountenum"
 )
 
-type ListAccountRequest struct {
-	*common.Paging
-}
-
-type ListAccountResponse struct {
-	*common.Paging
-	Accounts []db.Account
+type AccountFilter struct {
+	Username      *string                  `json:"username,omitempty" form:"username"`
+	AccountNumber *string                  `json:"account_number,omitempty" form:"account_number" binding:"omitempty,account_number"`
+	AccountType   *accountenum.AccountType `json:"account_type,omitempty" form:"account_type"`
 }

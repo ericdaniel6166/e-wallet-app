@@ -6,17 +6,18 @@ type successRes struct {
 	Data   interface{} `json:"data"`
 	Paging interface{} `json:"paging,omitempty"`
 	Filter interface{} `json:"filter,omitempty"`
+	Sort   interface{} `json:"sort,omitempty"`
 }
 
-func FullSuccessResponse(data, paging, filter interface{}) *successRes {
-	return &successRes{Data: data, Paging: paging, Filter: filter}
+func FullSuccessResponse(data, filter, paging, sort interface{}) *successRes {
+	return &successRes{Data: data, Paging: paging, Filter: filter, Sort: sort}
 }
 
 func SuccessResponse(data interface{}) *successRes {
-	return FullSuccessResponse(data, nil, nil)
+	return FullSuccessResponse(data, nil, nil, nil)
 
 }
 
 func SimpleSuccessResponse() *successRes {
-	return FullSuccessResponse(simpleSuccessMessage, nil, nil)
+	return FullSuccessResponse(simpleSuccessMessage, nil, nil, nil)
 }

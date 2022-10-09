@@ -7,12 +7,14 @@ import (
 )
 
 func RandomAccount() db.Account {
+	money := util.RandomMoney()
+	accountType := RandomAccountType()
 	return db.Account{
 		ID:          util.RandomInt(1, 1000),
-		UserID:      util.RandomInt(1, 1000),
+		Username:    util.RandomUsername(),
 		Status:      true,
-		Balance:     util.RandomMoney(),
-		AccountType: RandomAccountType(),
+		Balance:     &money,
+		AccountType: &accountType,
 	}
 }
 

@@ -11,9 +11,9 @@ import (
 	"net/http"
 )
 
-func GetAccount(appCtx component.AppContext) gin.HandlerFunc {
+func GetAccountByID(appCtx component.AppContext) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var req accountmodel.GetAccountRequest
+		var req accountmodel.GetAccountByIDRequest
 
 		if err := ctx.ShouldBindUri(&req); err != nil {
 			panic(common.ErrInvalidRequest(err))
@@ -24,14 +24,35 @@ func GetAccount(appCtx component.AppContext) gin.HandlerFunc {
 		repo := accountrepo.NewAccountRepo(store)
 		biz := accountbiz.NewAccountBiz(repo)
 
-		result, err := biz.GetById(ctx.Request.Context(), &req)
+		account, err := biz.GetByID(ctx.Request.Context(), req.ID)
 		if err != nil {
 			panic(err)
 			return
 		}
 
-		res := accountmodel.MapAccount(result.Account)
+		ctx.JSON(http.StatusOK, common.SuccessResponse(&account))
+	}
+}
 
-		ctx.JSON(http.StatusOK, common.SuccessResponse(&res))
+func GetAccountByAccountNumber(appCtx component.AppContext) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		var req accountmodel.GetAccountByAccountNumberRequest
+
+		if err := ctx.ShouldBindUri(&req); err != nil {
+			panic(common.ErrInvalidRequest(err))
+			return
+		}
+
+		store := accountstore.NewSqlStore(appCtx.GetMainDBConnection())
+		repo := accountrepo.NewAccountRepo(store)
+		biz := accountbiz.NewAccountBiz(repo)
+
+		account, err := biz.GetByAccountNumber(ctx.Request.Context(), req.AccountNumber)
+		if err != nil {
+			panic(err)
+			return
+		}
+
+		ctx.JSON(http.StatusOK, common.SuccessResponse(&account))
 	}
 }

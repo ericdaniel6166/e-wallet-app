@@ -34,6 +34,10 @@ func RandomString(n int) string {
 	return strBuilder.String()
 }
 
+func RandomUsername() string {
+	return RandomString(12)
+}
+
 // RandomMoney generates a random amount of money
 func RandomMoney() decimal.Decimal {
 	return decimal.NewFromFloat(RandomFloat(1000, 10000))

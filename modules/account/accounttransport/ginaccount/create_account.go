@@ -19,19 +19,23 @@ func CreateAccount(appCtx component.AppContext) gin.HandlerFunc {
 			panic(common.ErrInvalidRequest(err))
 			return
 		}
+		req.FillDefault()
+		err := req.Validate()
+		if err != nil {
+			panic(common.ErrInvalidRequest(err))
+			return
+		}
 
 		store := accountstore.NewSqlStore(appCtx.GetMainDBConnection())
 		repo := accountrepo.NewAccountRepo(store)
 		biz := accountbiz.NewAccountBiz(repo)
 
-		result, err := biz.Create(ctx.Request.Context(), &req)
+		account, err := biz.Create(ctx.Request.Context(), &req)
 		if err != nil {
 			panic(err)
 			return
 		}
 
-		res := accountmodel.MapAccount(result.Account)
-
-		ctx.JSON(http.StatusOK, common.SuccessResponse(&res))
+		ctx.JSON(http.StatusOK, common.SuccessResponse(&account))
 	}
 }

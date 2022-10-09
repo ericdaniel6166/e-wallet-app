@@ -104,6 +104,10 @@ func ErrInvalidRequest(err error) *AppError {
 	return NewBadRequestResponse(err, "Invalid request", err.Error(), "ErrInvalidRequest")
 }
 
+func ErrInsufficientBalance(err error) *AppError {
+	return NewBadRequestResponse(err, "Insufficient balance", err.Error(), "ErrInsufficientBalance")
+}
+
 func ErrMapping(err error) *AppError {
 	return NewInternalServerErrorResponse(err, "Error mapping", err.Error(), "ErrMapping")
 }
@@ -131,47 +135,47 @@ func ErrCannotDeleteEntity(entity string, err error) *AppError {
 }
 
 func ErrEntityDeleted(entity string, err error) *AppError {
-	return NewCustomError(
+	return NewInternalServerErrorResponse(
 		err,
 		fmt.Sprintf("%s deleted", strings.ToLower(entity)),
+		err.Error(),
 		fmt.Sprintf("Err%sDeleted", entity),
 	)
 }
 
 func ErrCannotGetEntity(entity string, err error) *AppError {
-	return NewCustomError(
+	return NewInternalServerErrorResponse(
 		err,
 		fmt.Sprintf("Cannot get %s", strings.ToLower(entity)),
+		err.Error(),
 		fmt.Sprintf("ErrCannotGet%s", entity),
 	)
 }
 
 func ErrEntityNotFound(entity string, err error) *AppError {
-	return NewNotFoundResponse(
-		err,
-		fmt.Sprintf("%s not found", entity),
-		err.Error(),
-		fmt.Sprintf("Err%sNotFound", entity),
+	return NewNotFoundResponse(err, fmt.Sprintf("%s not found", entity),
+		err.Error(), fmt.Sprintf("Err%sNotFound", entity),
 	)
 }
 
-func ErrEntityExisted(entity string, err error) *AppError {
-	return NewCustomError(
-		err,
-		fmt.Sprintf("%s already exists ", strings.ToLower(entity)),
-		fmt.Sprintf("Err%sAlreadyExists", entity),
-	)
+func ErrEntityAlreadyExists(entity string, err error) *AppError {
+	return NewBadRequestResponse(err, fmt.Sprintf("%s already exists", strings.ToLower(entity)),
+		err.Error(), fmt.Sprintf("Err%sAlreadyExists", entity))
 }
 
 func ErrCannotCreateEntity(entity string, err error) *AppError {
-	return NewInternalServerErrorResponse(err,
-		fmt.Sprintf("Cannot create %s", strings.ToLower(entity)),
+	return NewInternalServerErrorResponse(err, fmt.Sprintf("Cannot create %s", strings.ToLower(entity)),
 		err.Error(), fmt.Sprintf("ErrCannotCreate%s", entity))
 }
 
 func ErrNoPermission(err error) *AppError {
 	return NewForbidden(err, fmt.Sprintf("You have no permission"),
 		err.Error(), fmt.Sprintf("ErrNoPermission"))
+}
+
+func ErrEntityBlocked(entity string, err error) *AppError {
+	return NewForbidden(err, fmt.Sprintf("%s is blocked", entity),
+		err.Error(), fmt.Sprintf("Err%sBlocked", entity))
 }
 
 func ErrUnauthorized(err error) *AppError {
