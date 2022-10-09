@@ -10,8 +10,18 @@ drop_db:
 migrate_up:
 	migrate -path db/migration -database "postgresql://root:123456789@localhost:5432/e_wallet_app_v1?sslmode=disable" -verbose up
 
+migrate_up_1:
+	migrate -path db/migration -database "postgresql://root:123456789@localhost:5432/e_wallet_app_v1?sslmode=disable" -verbose up 1
+
+
 migrate_down:
 	migrate -path db/migration -database "postgresql://root:123456789@localhost:5432/e_wallet_app_v1?sslmode=disable" -verbose down
+
+migrate_down_1:
+	migrate -path db/migration -database "postgresql://root:123456789@localhost:5432/e_wallet_app_v1?sslmode=disable" -verbose down 1
+
+migrate_create:
+	migrate -path db/migration -database "postgresql://root:123456789@localhost:5432/e_wallet_app_v1?sslmode=disable" create -ext sql -dir db/migration -seq init_schema
 
 sqlc_generate:
 	docker run --rm -v "$(CURDIR):/src" -w //src kjconroy/sqlc generate
@@ -25,4 +35,4 @@ test:
 server:
 	go run main.go
 
-.PHONY: postgres createdb dropdb migrateup migratedown sqlc_generate sqlc_compile test server
+.PHONY: postgres_run create_db drop_db migrate_up migrate_up_1 migrate_down migrate_down_1 migrate_create sqlc_generate sqlc_compile test server

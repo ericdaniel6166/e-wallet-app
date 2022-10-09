@@ -42,6 +42,7 @@ func runService(appCtx component.AppContext) error {
 	v := r.Group(appCtx.Version())
 
 	routing.AccountRouter(appCtx, v)
+	routing.UserRouter(appCtx, v)
 
 	return r.Run(appCtx.HttpServerAddress())
 
