@@ -6,6 +6,7 @@ import (
 	"e-wallet-app/component"
 	"e-wallet-app/middleware"
 	"e-wallet-app/routing"
+	"e-wallet-app/val"
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 	"log"
@@ -32,6 +33,11 @@ func main() {
 func runService(appCtx component.AppContext) error {
 	r := gin.Default()
 	r.Use(middleware.Recover(appCtx))
+
+	err := val.RegisterCustomValidation()
+	if err != nil {
+		return err
+	}
 
 	v := r.Group(appCtx.Version())
 
