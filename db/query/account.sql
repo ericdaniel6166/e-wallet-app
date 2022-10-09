@@ -51,18 +51,21 @@ SET
 status = coalesce(sqlc.narg('status'), status),
 account_type = coalesce(sqlc.narg('account_type'), account_type),
 account_number = coalesce(sqlc.narg('account_number'), account_number),
-username = coalesce(sqlc.narg('username'), username)
+username = coalesce(sqlc.narg('username'), username),
+updated_at = now()
 WHERE id = $1
 RETURNING *;
 
 -- name: AddAccountBalanceByID :one
 UPDATE accounts
-SET balance = balance + sqlc.arg(amount)
+SET balance = balance + sqlc.arg(amount),
+updated_at = now()
 WHERE id = $1
 RETURNING *;
 
 -- name: AddAccountBalanceByAccountNumber :one
 UPDATE accounts
-SET balance = balance + sqlc.arg(amount)
+SET balance = balance + sqlc.arg(amount),
+updated_at = now()
 WHERE account_number = $1
 RETURNING *;

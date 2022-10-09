@@ -1,30 +1,34 @@
-CREATE TABLE "accounts"
+create table accounts
 (
-    "id"             bigserial PRIMARY KEY,
-    "username"       varchar(255)   NOT NULL,
-    "account_number" varchar(255)   NOT NULL,
-    "status"         boolean        NOT NULL default true,
-    "balance"        numeric(19, 4) NOT NULL default 0.0000,
-    "account_type"   varchar(255)   NOT NULL,
-    "created_at"     timestamptz    NOT NULL DEFAULT (now()),
-    "updated_at"     timestamptz    NOT NULL DEFAULT (now())
+    id             bigserial
+        primary key,
+    username       varchar(255)                            not null,
+    account_number varchar(255)                            not null
+        unique,
+    status         boolean                  default true   not null,
+    balance        numeric(19, 4)           default 0.0000 not null,
+    account_type   varchar(255)                            not null,
+    created_at     timestamp with time zone default now()  not null,
+    updated_at     timestamp with time zone default now()  not null
 );
 
-CREATE TABLE "entries"
+create table entries
 (
-    "id"             bigserial PRIMARY KEY,
-    "account_number" varchar(255)   NOT NULL,
-    "amount"         numeric(19, 4) NOT NULL,
-    "created_at"     timestamptz    NOT NULL DEFAULT (now())
+    id             bigserial
+        primary key,
+    account_number varchar(255)                           not null,
+    amount         numeric(19, 4)                         not null,
+    created_at     timestamp with time zone default now() not null
 );
 
-CREATE TABLE "transfers"
+create table transfers
 (
-    "id"                  bigserial PRIMARY KEY,
-    "from_account_number" varchar(255)   NOT NULL,
-    "to_account_number"   varchar(255)   NOT NULL,
-    "amount"              numeric(19, 4) NOT NULL,
-    "created_at"          timestamptz    NOT NULL DEFAULT (now())
+    id                  bigserial
+        primary key,
+    from_account_number varchar(255)                           not null,
+    to_account_number   varchar(255)                           not null,
+    amount              numeric(19, 4)                         not null,
+    created_at          timestamp with time zone default now() not null
 );
 
 CREATE INDEX ON "accounts" ("username");
