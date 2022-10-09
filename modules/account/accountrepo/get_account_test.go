@@ -3,7 +3,7 @@ package accountrepo
 import (
 	"context"
 	"e-wallet-app/common"
-	"e-wallet-app/modules/account/accountmodel"
+	db "e-wallet-app/db/sqlc"
 	mockaccountstore "e-wallet-app/modules/account/accountrepo/mock"
 	"e-wallet-app/modules/account/accountutil"
 	"github.com/golang/mock/gomock"
@@ -13,40 +13,34 @@ import (
 
 type getByIDDataTable struct {
 	name       string
-	request    accountmodel.GetAccountRequest
+	id         int64
 	buildStubs func(store *mockaccountstore.MockAccountStore)
-	expect     func(t *testing.T, actual *accountmodel.GetAccountResponse, err error)
+	expect     func(t *testing.T, actual *db.Account, err error)
 }
 
-func TestGetById(t *testing.T) {
+func TestGetByID(t *testing.T) {
 	account := accountutil.RandomAccount()
-	res := accountmodel.GetAccountResponse{
-		Account: &account,
-	}
-	req := accountmodel.GetAccountRequest{
-		ID: account.ID,
-	}
 
 	tests := []getByIDDataTable{
 		{
-			name:    "ok",
-			request: req,
+			name: "ok",
+			id:   account.ID,
 			buildStubs: func(store *mockaccountstore.MockAccountStore) {
-				store.EXPECT().GetById(gomock.Any(), gomock.Eq(&req)).Times(1).Return(&res, nil)
+				store.EXPECT().GetByID(gomock.Any(), gomock.Eq(account.ID)).Times(1).Return(&account, nil)
 			},
-			expect: func(t *testing.T, actual *accountmodel.GetAccountResponse, err error) {
+			expect: func(t *testing.T, actual *db.Account, err error) {
 				require.NoError(t, err)
 				require.NotNil(t, actual)
-				require.Equal(t, &account, actual.Account)
+				require.Equal(t, &account, actual)
 			},
 		},
 		{
-			name:    "record not found",
-			request: req,
+			name: "record not found",
+			id:   account.ID,
 			buildStubs: func(store *mockaccountstore.MockAccountStore) {
-				store.EXPECT().GetById(gomock.Any(), gomock.Eq(&req)).Times(1).Return(nil, common.RecordNotFound)
+				store.EXPECT().GetByID(gomock.Any(), gomock.Eq(account.ID)).Times(1).Return(nil, common.RecordNotFound)
 			},
-			expect: func(t *testing.T, actual *accountmodel.GetAccountResponse, err error) {
+			expect: func(t *testing.T, actual *db.Account, err error) {
 				require.Nil(t, actual)
 				require.Error(t, err)
 				require.EqualError(t, err, common.RecordNotFound.Error())
@@ -64,7 +58,7 @@ func TestGetById(t *testing.T) {
 			test.buildStubs(store)
 			repo := NewAccountRepo(store)
 
-			actual, err := repo.GetById(context.Background(), &(test.request))
+			actual, err := repo.GetByID(context.Background(), test.id)
 
 			test.expect(t, actual, err)
 		})

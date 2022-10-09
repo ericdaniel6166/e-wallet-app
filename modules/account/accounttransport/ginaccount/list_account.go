@@ -13,8 +13,11 @@ import (
 
 func ListAccount(appCtx component.AppContext) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var req accountmodel.ListAccountRequest
-		var paging common.Paging
+		var (
+			filter accountmodel.AccountFilter
+			paging common.Paging
+			sort   common.Sorting
+		)
 
 		if err := ctx.ShouldBindQuery(&paging); err != nil {
 			panic(common.ErrInvalidRequest(err))
@@ -22,20 +25,26 @@ func ListAccount(appCtx component.AppContext) gin.HandlerFunc {
 		}
 		paging.FillDefault()
 
+		if err := ctx.ShouldBindQuery(&sort); err != nil {
+			panic(common.ErrInvalidRequest(err))
+			return
+		}
+		sort.FillDefault()
+
+		if err := ctx.ShouldBindQuery(&filter); err != nil {
+			panic(common.ErrInvalidRequest(err))
+			return
+		}
 		store := accountstore.NewSqlStore(appCtx.GetMainDBConnection())
 		repo := accountrepo.NewAccountRepo(store)
 		biz := accountbiz.NewAccountBiz(repo)
 
-		req.Paging = &paging
-
-		result, err := biz.List(ctx.Request.Context(), &req)
+		accounts, err := biz.List(ctx.Request.Context(), &filter, &paging, &sort)
 		if err != nil {
 			panic(err)
 			return
 		}
 
-		res := accountmodel.MapAccounts(result.Accounts)
-
-		ctx.JSON(http.StatusOK, common.FullSuccessResponse(res, &paging, nil))
+		ctx.JSON(http.StatusOK, common.FullSuccessResponse(accounts, &filter, &paging, &sort))
 	}
 }

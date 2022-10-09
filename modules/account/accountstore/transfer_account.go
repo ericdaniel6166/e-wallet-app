@@ -29,37 +29,39 @@ func (store *sqlStore) Transfer(ctx context.Context, req *accountmodel.TransferA
 
 	var res accountmodel.TransferAccountResponse
 
+	amount := req.Amount
+	negAmount := amount.Neg()
 	res.Transfer, err = qtx.CreateTransfer(ctx, db.CreateTransferParams{
-		FromAccountID: req.FromAccountID,
-		ToAccountID:   req.ToAccountID,
-		Amount:        req.Amount,
+		FromAccountNumber: req.FromAccountNumber,
+		ToAccountNumber:   req.ToAccountNumber,
+		Amount:            &amount,
 	})
 	if err != nil {
 		return nil, err
 	}
 
 	res.FromEntry, err = qtx.CreateEntry(ctx, db.CreateEntryParams{
-		AccountID: req.FromAccountID,
-		Amount:    req.Amount.Neg(),
+		AccountNumber: req.FromAccountNumber,
+		Amount:        &negAmount,
 	})
 	if err != nil {
 		return nil, err
 	}
 
 	res.ToEntry, err = qtx.CreateEntry(ctx, db.CreateEntryParams{
-		AccountID: req.ToAccountID,
-		Amount:    req.Amount,
+		AccountNumber: req.ToAccountNumber,
+		Amount:        &amount,
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	if req.FromAccountID < req.ToAccountID {
+	if req.FromAccountNumber < req.ToAccountNumber {
 		res.FromAccount, res.ToAccount, err = addMoney(ctx, qtx,
-			req.FromAccountID, req.Amount.Neg(), req.ToAccountID, req.Amount)
+			req.FromAccountNumber, negAmount, req.ToAccountNumber, amount)
 	} else {
 		res.ToAccount, res.FromAccount, err = addMoney(ctx, qtx,
-			req.ToAccountID, req.Amount, req.FromAccountID, req.Amount.Neg())
+			req.ToAccountNumber, amount, req.FromAccountNumber, negAmount)
 	}
 
 	err = tx.Commit()
@@ -70,18 +72,18 @@ func (store *sqlStore) Transfer(ctx context.Context, req *accountmodel.TransferA
 	return &res, nil
 }
 
-func addMoney(ctx context.Context, qtx *db.Queries, accountID1 int64, amount1 decimal.Decimal, accountID2 int64, amount2 decimal.Decimal,
+func addMoney(ctx context.Context, qtx *db.Queries, accountNumber1 string, amount1 decimal.Decimal, accountNumber2 string, amount2 decimal.Decimal,
 ) (account1, account2 db.Account, err error) {
-	account1, err = qtx.AddAccountBalance(ctx, db.AddAccountBalanceParams{
-		ID:     accountID1,
-		Amount: amount1,
+	account1, err = qtx.AddAccountBalanceByAccountNumber(ctx, db.AddAccountBalanceByAccountNumberParams{
+		AccountNumber: accountNumber1,
+		Amount:        &amount1,
 	})
 	if err != nil {
 		return
 	}
-	account2, err = qtx.AddAccountBalance(ctx, db.AddAccountBalanceParams{
-		ID:     accountID2,
-		Amount: amount2,
+	account2, err = qtx.AddAccountBalanceByAccountNumber(ctx, db.AddAccountBalanceByAccountNumberParams{
+		AccountNumber: accountNumber2,
+		Amount:        &amount2,
 	})
 	if err != nil {
 		return

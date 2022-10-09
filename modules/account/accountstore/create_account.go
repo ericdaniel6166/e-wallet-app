@@ -7,16 +7,15 @@ import (
 	"e-wallet-app/modules/account/accountmodel"
 )
 
-func (store *sqlStore) Create(ctx context.Context, req *accountmodel.CreateAccountRequest) (*accountmodel.CreateAccountResponse, error) {
-	var res accountmodel.CreateAccountResponse
+func (store *sqlStore) Create(ctx context.Context, req *accountmodel.CreateAccountRequest) (*db.Account, error) {
 	account, err := store.CreateAccount(ctx, db.CreateAccountParams{
-		UserID:      req.UserID,
-		Balance:     req.Balance,
-		AccountType: req.AccountType,
+		Username:      req.Username,
+		Balance:       req.Balance,
+		AccountType:   &req.AccountType,
+		AccountNumber: req.AccountNumber,
 	})
 	if err != nil {
 		return nil, common.ErrDB(err)
 	}
-	res.Account = &account
-	return &res, nil
+	return &account, nil
 }

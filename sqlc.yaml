@@ -13,8 +13,7 @@ packages:
       emit_db_tags: false
       json_tags_case_style: "snake"
 overrides:
-    - go_type: "github.com/shopspring/decimal.Decimal"
+    - go_type: "*github.com/shopspring/decimal.Decimal"
       db_type: "pg_catalog.numeric"
     - column: "accounts.account_type"
-      go_type: "e-wallet-app/modules/account/accountenum.AccountType"
-
+      go_type: "*e-wallet-app/modules/account/accountenum.AccountType"

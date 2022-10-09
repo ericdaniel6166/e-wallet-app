@@ -6,9 +6,9 @@ import (
 )
 
 type TransferAccountRequest struct {
-	FromAccountID int64           `json:"from_account_id" binding:"required"`
-	ToAccountID   int64           `json:"to_account_id" binding:"required"`
-	Amount        decimal.Decimal `json:"amount" binding:"required"`
+	FromAccountNumber string          `json:"from_account_number" binding:"required,account_number"`
+	ToAccountNumber   string          `json:"to_account_number" binding:"required,account_number"`
+	Amount            decimal.Decimal `json:"amount" binding:"required"`
 }
 
 type TransferAccountResponse struct {
