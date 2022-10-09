@@ -5,5 +5,8 @@ import (
 )
 
 var (
-	RecordNotFound = errors.New("record not found")
+	RecordNotFound      = errors.New("record not found")
+	RecordIsBlocked     = errors.New("record is blocked")
+	InsufficientBalance = errors.New("insufficient balance")
+	EntityExists        = errors.New("entity already exists")
 )

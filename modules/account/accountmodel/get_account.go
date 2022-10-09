@@ -1,11 +1,13 @@
 package accountmodel
 
-import db "e-wallet-app/db/sqlc"
+import (
+	_ "encoding/json"
+)
 
-type GetAccountRequest struct {
+type GetAccountByIDRequest struct {
 	ID int64 `json:"id" uri:"id" binding:"required,min=1"`
 }
 
-type GetAccountResponse struct {
-	*db.Account
+type GetAccountByAccountNumberRequest struct {
+	AccountNumber string `json:"account_number" uri:"account_number" binding:"required,account_number"`
 }

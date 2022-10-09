@@ -7,29 +7,59 @@ package db
 
 import (
 	"context"
+	"database/sql"
 
 	"e-wallet-app/modules/account/accountenum"
 	"github.com/shopspring/decimal"
 )
 
-const addAccountBalance = `-- name: AddAccountBalance :one
+const addAccountBalanceByAccountNumber = `-- name: AddAccountBalanceByAccountNumber :one
 UPDATE accounts
-SET balance = balance + $1
-WHERE id = $2
-RETURNING id, user_id, status, balance, account_type, created_at, updated_at
+SET balance = balance + $2
+WHERE account_number = $1
+RETURNING id, username, account_number, status, balance, account_type, created_at, updated_at
 `
 
-type AddAccountBalanceParams struct {
-	Amount decimal.Decimal `json:"amount"`
-	ID     int64           `json:"id"`
+type AddAccountBalanceByAccountNumberParams struct {
+	AccountNumber string           `json:"account_number"`
+	Amount        *decimal.Decimal `json:"amount"`
 }
 
-func (q *Queries) AddAccountBalance(ctx context.Context, arg AddAccountBalanceParams) (Account, error) {
-	row := q.db.QueryRowContext(ctx, addAccountBalance, arg.Amount, arg.ID)
+func (q *Queries) AddAccountBalanceByAccountNumber(ctx context.Context, arg AddAccountBalanceByAccountNumberParams) (Account, error) {
+	row := q.db.QueryRowContext(ctx, addAccountBalanceByAccountNumber, arg.AccountNumber, arg.Amount)
 	var i Account
 	err := row.Scan(
 		&i.ID,
-		&i.UserID,
+		&i.Username,
+		&i.AccountNumber,
+		&i.Status,
+		&i.Balance,
+		&i.AccountType,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const addAccountBalanceByID = `-- name: AddAccountBalanceByID :one
+UPDATE accounts
+SET balance = balance + $2
+WHERE id = $1
+RETURNING id, username, account_number, status, balance, account_type, created_at, updated_at
+`
+
+type AddAccountBalanceByIDParams struct {
+	ID     int64            `json:"id"`
+	Amount *decimal.Decimal `json:"amount"`
+}
+
+func (q *Queries) AddAccountBalanceByID(ctx context.Context, arg AddAccountBalanceByIDParams) (Account, error) {
+	row := q.db.QueryRowContext(ctx, addAccountBalanceByID, arg.ID, arg.Amount)
+	var i Account
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.AccountNumber,
 		&i.Status,
 		&i.Balance,
 		&i.AccountType,
@@ -42,48 +72,60 @@ func (q *Queries) AddAccountBalance(ctx context.Context, arg AddAccountBalancePa
 const countAccounts = `-- name: CountAccounts :one
 SELECT count(*)
 FROM accounts
+WHERE
+account_number = coalesce($1, account_number)
+AND username = coalesce($2, username)
+AND account_type = coalesce($3, account_type)
+AND status = coalesce($4, status)
 `
 
-func (q *Queries) CountAccounts(ctx context.Context) (int64, error) {
-	row := q.db.QueryRowContext(ctx, countAccounts)
-	var count int64
-	err := row.Scan(&count)
-	return count, err
+type CountAccountsParams struct {
+	AccountNumber sql.NullString           `json:"account_number"`
+	Username      sql.NullString           `json:"username"`
+	AccountType   *accountenum.AccountType `json:"account_type"`
+	Status        sql.NullBool             `json:"status"`
 }
 
-const countAccountsByAccountType = `-- name: CountAccountsByAccountType :one
-SELECT count(*)
-FROM accounts
-WHERE account_type = $1
-`
-
-func (q *Queries) CountAccountsByAccountType(ctx context.Context, accountType accountenum.AccountType) (int64, error) {
-	row := q.db.QueryRowContext(ctx, countAccountsByAccountType, accountType)
+func (q *Queries) CountAccounts(ctx context.Context, arg CountAccountsParams) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countAccounts,
+		arg.AccountNumber,
+		arg.Username,
+		arg.AccountType,
+		arg.Status,
+	)
 	var count int64
 	err := row.Scan(&count)
 	return count, err
 }
 
 const createAccount = `-- name: CreateAccount :one
-INSERT INTO accounts (user_id,
-                      balance,
-                      account_type)
-VALUES ($1, $2, $3)
-RETURNING id, user_id, status, balance, account_type, created_at, updated_at
+INSERT INTO accounts (username,
+balance,
+account_type,
+account_number) VALUES
+($1, $2, $3, $4)
+RETURNING id, username, account_number, status, balance, account_type, created_at, updated_at
 `
 
 type CreateAccountParams struct {
-	UserID      int64                   `json:"user_id"`
-	Balance     decimal.Decimal         `json:"balance"`
-	AccountType accountenum.AccountType `json:"account_type"`
+	Username      string                   `json:"username"`
+	Balance       *decimal.Decimal         `json:"balance"`
+	AccountType   *accountenum.AccountType `json:"account_type"`
+	AccountNumber string                   `json:"account_number"`
 }
 
 func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (Account, error) {
-	row := q.db.QueryRowContext(ctx, createAccount, arg.UserID, arg.Balance, arg.AccountType)
+	row := q.db.QueryRowContext(ctx, createAccount,
+		arg.Username,
+		arg.Balance,
+		arg.AccountType,
+		arg.AccountNumber,
+	)
 	var i Account
 	err := row.Scan(
 		&i.ID,
-		&i.UserID,
+		&i.Username,
+		&i.AccountNumber,
 		&i.Status,
 		&i.Balance,
 		&i.AccountType,
@@ -93,18 +135,19 @@ func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (A
 	return i, err
 }
 
-const getAccount = `-- name: GetAccount :one
-SELECT id, user_id, status, balance, account_type, created_at, updated_at
+const getAccountByAccountNumber = `-- name: GetAccountByAccountNumber :one
+SELECT id, username, account_number, status, balance, account_type, created_at, updated_at
 FROM accounts
-WHERE id = $1
+WHERE account_number = $1
 `
 
-func (q *Queries) GetAccount(ctx context.Context, id int64) (Account, error) {
-	row := q.db.QueryRowContext(ctx, getAccount, id)
+func (q *Queries) GetAccountByAccountNumber(ctx context.Context, accountNumber string) (Account, error) {
+	row := q.db.QueryRowContext(ctx, getAccountByAccountNumber, accountNumber)
 	var i Account
 	err := row.Scan(
 		&i.ID,
-		&i.UserID,
+		&i.Username,
+		&i.AccountNumber,
 		&i.Status,
 		&i.Balance,
 		&i.AccountType,
@@ -114,19 +157,42 @@ func (q *Queries) GetAccount(ctx context.Context, id int64) (Account, error) {
 	return i, err
 }
 
-const getAccountForUpdate = `-- name: GetAccountForUpdate :one
-SELECT id, user_id, status, balance, account_type, created_at, updated_at
+const getAccountByID = `-- name: GetAccountByID :one
+SELECT id, username, account_number, status, balance, account_type, created_at, updated_at
 FROM accounts
 WHERE id = $1
-    FOR NO KEY UPDATE
 `
 
-func (q *Queries) GetAccountForUpdate(ctx context.Context, id int64) (Account, error) {
-	row := q.db.QueryRowContext(ctx, getAccountForUpdate, id)
+func (q *Queries) GetAccountByID(ctx context.Context, id int64) (Account, error) {
+	row := q.db.QueryRowContext(ctx, getAccountByID, id)
 	var i Account
 	err := row.Scan(
 		&i.ID,
-		&i.UserID,
+		&i.Username,
+		&i.AccountNumber,
+		&i.Status,
+		&i.Balance,
+		&i.AccountType,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const getAccountByIDForUpdate = `-- name: GetAccountByIDForUpdate :one
+SELECT id, username, account_number, status, balance, account_type, created_at, updated_at
+FROM accounts
+WHERE id = $1
+FOR NO KEY UPDATE
+`
+
+func (q *Queries) GetAccountByIDForUpdate(ctx context.Context, id int64) (Account, error) {
+	row := q.db.QueryRowContext(ctx, getAccountByIDForUpdate, id)
+	var i Account
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.AccountNumber,
 		&i.Status,
 		&i.Balance,
 		&i.AccountType,
@@ -137,19 +203,42 @@ func (q *Queries) GetAccountForUpdate(ctx context.Context, id int64) (Account, e
 }
 
 const listAccounts = `-- name: ListAccounts :many
-SELECT id, user_id, status, balance, account_type, created_at, updated_at
+SELECT id, username, account_number, status, balance, account_type, created_at, updated_at
 FROM accounts
-ORDER BY id
-LIMIT $1 OFFSET $2
+WHERE
+account_number = coalesce($3, account_number)
+AND username = coalesce($4, username)
+AND account_type = coalesce($5, account_type)
+AND status = coalesce($6, status)
+ORDER BY
+(case when $7 = 'id' and $8 = 'ASC' then id end),
+(case when $7 = 'id' and $8 = 'DESC' then id end) desc
+LIMIT $1
+OFFSET $2
 `
 
 type ListAccountsParams struct {
-	Limit  int32 `json:"limit"`
-	Offset int32 `json:"offset"`
+	Limit         int32                    `json:"limit"`
+	Offset        int32                    `json:"offset"`
+	AccountNumber sql.NullString           `json:"account_number"`
+	Username      sql.NullString           `json:"username"`
+	AccountType   *accountenum.AccountType `json:"account_type"`
+	Status        sql.NullBool             `json:"status"`
+	SortColumn    interface{}              `json:"sort_column"`
+	SortDirection interface{}              `json:"sort_direction"`
 }
 
 func (q *Queries) ListAccounts(ctx context.Context, arg ListAccountsParams) ([]Account, error) {
-	rows, err := q.db.QueryContext(ctx, listAccounts, arg.Limit, arg.Offset)
+	rows, err := q.db.QueryContext(ctx, listAccounts,
+		arg.Limit,
+		arg.Offset,
+		arg.AccountNumber,
+		arg.Username,
+		arg.AccountType,
+		arg.Status,
+		arg.SortColumn,
+		arg.SortDirection,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -159,89 +248,8 @@ func (q *Queries) ListAccounts(ctx context.Context, arg ListAccountsParams) ([]A
 		var i Account
 		if err := rows.Scan(
 			&i.ID,
-			&i.UserID,
-			&i.Status,
-			&i.Balance,
-			&i.AccountType,
-			&i.CreatedAt,
-			&i.UpdatedAt,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const listAccountsByAccountType = `-- name: ListAccountsByAccountType :many
-SELECT id, user_id, status, balance, account_type, created_at, updated_at
-FROM accounts
-WHERE account_type = $1
-ORDER BY id
-LIMIT $2 OFFSET $3
-`
-
-type ListAccountsByAccountTypeParams struct {
-	AccountType accountenum.AccountType `json:"account_type"`
-	Limit       int32                   `json:"limit"`
-	Offset      int32                   `json:"offset"`
-}
-
-func (q *Queries) ListAccountsByAccountType(ctx context.Context, arg ListAccountsByAccountTypeParams) ([]Account, error) {
-	rows, err := q.db.QueryContext(ctx, listAccountsByAccountType, arg.AccountType, arg.Limit, arg.Offset)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	items := []Account{}
-	for rows.Next() {
-		var i Account
-		if err := rows.Scan(
-			&i.ID,
-			&i.UserID,
-			&i.Status,
-			&i.Balance,
-			&i.AccountType,
-			&i.CreatedAt,
-			&i.UpdatedAt,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const listAccountsByUser = `-- name: ListAccountsByUser :many
-SELECT id, user_id, status, balance, account_type, created_at, updated_at
-FROM accounts
-WHERE user_id = $1
-`
-
-func (q *Queries) ListAccountsByUser(ctx context.Context, userID int64) ([]Account, error) {
-	rows, err := q.db.QueryContext(ctx, listAccountsByUser, userID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	items := []Account{}
-	for rows.Next() {
-		var i Account
-		if err := rows.Scan(
-			&i.ID,
-			&i.UserID,
+			&i.Username,
+			&i.AccountNumber,
 			&i.Status,
 			&i.Balance,
 			&i.AccountType,
@@ -263,49 +271,36 @@ func (q *Queries) ListAccountsByUser(ctx context.Context, userID int64) ([]Accou
 
 const updateAccountStatus = `-- name: UpdateAccountStatus :one
 UPDATE accounts
-SET status = $2
+SET
+status = coalesce($2, status),
+account_type = coalesce($3, account_type),
+account_number = coalesce($4, account_number),
+username = coalesce($5, username)
 WHERE id = $1
-RETURNING id, user_id, status, balance, account_type, created_at, updated_at
+RETURNING id, username, account_number, status, balance, account_type, created_at, updated_at
 `
 
 type UpdateAccountStatusParams struct {
-	ID     int64 `json:"id"`
-	Status bool  `json:"status"`
+	ID            int64                    `json:"id"`
+	Status        sql.NullBool             `json:"status"`
+	AccountType   *accountenum.AccountType `json:"account_type"`
+	AccountNumber sql.NullString           `json:"account_number"`
+	Username      sql.NullString           `json:"username"`
 }
 
 func (q *Queries) UpdateAccountStatus(ctx context.Context, arg UpdateAccountStatusParams) (Account, error) {
-	row := q.db.QueryRowContext(ctx, updateAccountStatus, arg.ID, arg.Status)
-	var i Account
-	err := row.Scan(
-		&i.ID,
-		&i.UserID,
-		&i.Status,
-		&i.Balance,
-		&i.AccountType,
-		&i.CreatedAt,
-		&i.UpdatedAt,
+	row := q.db.QueryRowContext(ctx, updateAccountStatus,
+		arg.ID,
+		arg.Status,
+		arg.AccountType,
+		arg.AccountNumber,
+		arg.Username,
 	)
-	return i, err
-}
-
-const updateAccountType = `-- name: UpdateAccountType :one
-UPDATE accounts
-SET account_type = $2
-WHERE id = $1
-RETURNING id, user_id, status, balance, account_type, created_at, updated_at
-`
-
-type UpdateAccountTypeParams struct {
-	ID          int64                   `json:"id"`
-	AccountType accountenum.AccountType `json:"account_type"`
-}
-
-func (q *Queries) UpdateAccountType(ctx context.Context, arg UpdateAccountTypeParams) (Account, error) {
-	row := q.db.QueryRowContext(ctx, updateAccountType, arg.ID, arg.AccountType)
 	var i Account
 	err := row.Scan(
 		&i.ID,
-		&i.UserID,
+		&i.Username,
+		&i.AccountNumber,
 		&i.Status,
 		&i.Balance,
 		&i.AccountType,

@@ -26,7 +26,7 @@ func TransferAccount(appCtx component.AppContext) gin.HandlerFunc {
 
 		res, err := biz.Transfer(ctx.Request.Context(), &req)
 		if err != nil {
-			panic(common.ErrInternal(err))
+			panic(err)
 			return
 		}
 
