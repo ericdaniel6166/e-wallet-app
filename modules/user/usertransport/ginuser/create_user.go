@@ -8,6 +8,7 @@ import (
 	"e-wallet-app/modules/user/userrepo"
 	"e-wallet-app/modules/user/userstore"
 	"github.com/gin-gonic/gin"
+	"github.com/mitchellh/mapstructure"
 	"net/http"
 )
 
@@ -29,7 +30,13 @@ func CreateUser(appCtx component.AppContext) gin.HandlerFunc {
 			panic(err)
 			return
 		}
+		var res usermodel.CreateUserResponse
+		err = mapstructure.Decode(user, &res)
+		if err != nil {
+			panic(common.ErrInternal(err))
+			return
+		}
 
-		ctx.JSON(http.StatusOK, common.SuccessResponse(&user))
+		ctx.JSON(http.StatusOK, common.SuccessResponse(&res))
 	}
 }
