@@ -22,7 +22,8 @@ func main() {
 		log.Fatal("cannot connect to db:", err)
 	}
 
-	appCtx := component.NewAppContext(conn, config.Version, config.HttpServerAddress)
+	appCtx := component.NewAppContext(conn, config.Version, config.HttpServerAddress,
+		config.TokenSymmetricKey, config.AccessTokenDuration)
 
 	if err := runService(appCtx); err != nil {
 		log.Fatalln(err)
