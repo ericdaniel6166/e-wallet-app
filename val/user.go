@@ -6,7 +6,6 @@ import (
 )
 
 var (
-	//isValidLengthPassword                       = regexp.MustCompile(` ^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$`).MatchString
 	isValidLengthPassword                 = regexp.MustCompile(`^.{8,20}$`).MatchString
 	isHaveLowercaseCharacter              = regexp.MustCompile(`[a-z]+`).MatchString
 	isHaveUppercaseCharacter              = regexp.MustCompile(`[A-Z]+`).MatchString
