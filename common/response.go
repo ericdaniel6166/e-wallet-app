@@ -1,6 +1,6 @@
 package common
 
-const simpleSuccessMessage = "data: true"
+const simpleSuccessMessage = true
 
 type successRes struct {
 	Data   interface{} `json:"data"`
