@@ -24,7 +24,8 @@ func TransferAccount(appCtx component.AppContext) gin.HandlerFunc {
 		repo := accountrepo.NewAccountRepo(store)
 		biz := accountbiz.NewAccountBiz(repo)
 
-		res, err := biz.Transfer(ctx.Request.Context(), &req)
+		requester := ctx.MustGet(common.CurrentUser).(common.Requester)
+		res, err := biz.Transfer(ctx.Request.Context(), &req, requester)
 		if err != nil {
 			panic(err)
 			return

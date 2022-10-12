@@ -7,6 +7,7 @@ import (
 	"e-wallet-app/modules/account/accountmodel"
 	"e-wallet-app/modules/account/accountrepo"
 	"e-wallet-app/modules/account/accountstore"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -27,6 +28,13 @@ func GetAccountByID(appCtx component.AppContext) gin.HandlerFunc {
 		account, err := biz.GetByID(ctx.Request.Context(), req.ID)
 		if err != nil {
 			panic(err)
+			return
+		}
+		requester := ctx.MustGet(common.CurrentUser).(common.Requester)
+		if account.Username != requester.GetUsername() {
+			panic(common.ErrNoPermission(
+				fmt.Errorf("account id %d does not belong to user with username %s",
+					req.ID, requester.GetUsername())))
 			return
 		}
 
@@ -50,6 +58,13 @@ func GetAccountByAccountNumber(appCtx component.AppContext) gin.HandlerFunc {
 		account, err := biz.GetByAccountNumber(ctx.Request.Context(), req.AccountNumber)
 		if err != nil {
 			panic(err)
+			return
+		}
+		requester := ctx.MustGet(common.CurrentUser).(common.Requester)
+		if account.Username != requester.GetUsername() {
+			panic(common.ErrNoPermission(
+				fmt.Errorf("account number %s does not belong to user with username %s",
+					req.AccountNumber, requester.GetUsername())))
 			return
 		}
 

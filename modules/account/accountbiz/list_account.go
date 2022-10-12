@@ -8,9 +8,9 @@ import (
 )
 
 func (biz *accountBiz) List(ctx context.Context, req *accountmodel.AccountFilter,
-	paging *common.Paging, sort *common.Sorting,
+	paging *common.Paging, sort *common.Sorting, requester common.Requester,
 ) ([]db.Account, error) {
-	accounts, err := biz.repo.List(ctx, req, paging, sort)
+	accounts, err := biz.repo.List(ctx, req, paging, sort, requester)
 	if err != nil {
 		return nil, common.ErrCannotListEntity(accountmodel.EntityName, err)
 	}
