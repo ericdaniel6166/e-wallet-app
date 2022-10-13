@@ -1,5 +1,5 @@
 postgres_run:
-	docker run --name e-wallet-app-postgres -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=123456789 -d postgres:14.5-alpine
+	docker run --name e-wallet-app-postgres --network e-wallet-app-network -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=123456789 -d postgres:14.5-alpine
 
 create_db:
 	docker exec -it e-wallet-app-postgres createdb --username=root --owner=root e_wallet_app_v1
@@ -35,4 +35,13 @@ test:
 server:
 	go run main.go
 
-.PHONY: postgres_run create_db drop_db migrate_up migrate_up_1 migrate_down migrate_down_1 migrate_create sqlc_generate sqlc_compile test server
+docker_build:
+	docker build -t e-wallet-app:latest .
+
+docker_network:
+	docker network create e-wallet-app-network
+
+docker_run:
+	docker run --name e-wallet-app-v1 --network e-wallet-app-network -p 8080:8080 -e GIN_MODE=release -e DB_SOURCE="postgresql://root:123456789@e-wallet-app-postgres:5432/e_wallet_app_v1?sslmode=disable" e-wallet-app:latest
+
+.PHONY: postgres_run create_db drop_db migrate_up migrate_up_1 migrate_down migrate_down_1 migrate_create sqlc_generate sqlc_compile test server docker_build
