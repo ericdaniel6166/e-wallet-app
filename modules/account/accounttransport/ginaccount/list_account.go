@@ -39,7 +39,8 @@ func ListAccount(appCtx component.AppContext) gin.HandlerFunc {
 		repo := accountrepo.NewAccountRepo(store)
 		biz := accountbiz.NewAccountBiz(repo)
 
-		accounts, err := biz.List(ctx.Request.Context(), &filter, &paging, &sort)
+		requester := ctx.MustGet(common.CurrentUser).(common.Requester)
+		accounts, err := biz.List(ctx.Request.Context(), &filter, &paging, &sort, requester)
 		if err != nil {
 			panic(err)
 			return

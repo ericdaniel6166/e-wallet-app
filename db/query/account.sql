@@ -26,8 +26,7 @@ FOR NO KEY UPDATE;
 SELECT *
 FROM accounts
 WHERE
-account_number = coalesce(sqlc.narg('account_number'), account_number)
-AND username = coalesce(sqlc.narg('username'), username)
+username = coalesce(sqlc.narg('username'), username)
 AND account_type = coalesce(sqlc.narg('account_type'), account_type)
 AND status = coalesce(sqlc.narg('status'), status)
 ORDER BY
@@ -40,8 +39,7 @@ OFFSET $2;
 SELECT count(*)
 FROM accounts
 WHERE
-account_number = coalesce(sqlc.narg('account_number'), account_number)
-AND username = coalesce(sqlc.narg('username'), username)
+username = coalesce(sqlc.narg('username'), username)
 AND account_type = coalesce(sqlc.narg('account_type'), account_type)
 AND status = coalesce(sqlc.narg('status'), status);
 

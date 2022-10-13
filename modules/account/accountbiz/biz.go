@@ -13,7 +13,7 @@ type AccountRepo interface {
 	GetByID(ctx context.Context, id int64) (*db.Account, error)
 	GetByAccountNumber(ctx context.Context, accountNumber string) (*db.Account, error)
 	List(ctx context.Context, req *accountmodel.AccountFilter,
-		paging *common.Paging, sort *common.Sorting) ([]db.Account, error)
+		paging *common.Paging, sort *common.Sorting, requester common.Requester) ([]db.Account, error)
 	Transfer(ctx context.Context, req *accountmodel.TransferAccountRequest,
 	) (*accountmodel.TransferAccountResponse, error)
 }

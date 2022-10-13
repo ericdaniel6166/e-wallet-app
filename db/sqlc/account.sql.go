@@ -75,26 +75,19 @@ const countAccounts = `-- name: CountAccounts :one
 SELECT count(*)
 FROM accounts
 WHERE
-account_number = coalesce($1, account_number)
-AND username = coalesce($2, username)
-AND account_type = coalesce($3, account_type)
-AND status = coalesce($4, status)
+username = coalesce($1, username)
+AND account_type = coalesce($2, account_type)
+AND status = coalesce($3, status)
 `
 
 type CountAccountsParams struct {
-	AccountNumber sql.NullString           `json:"account_number"`
-	Username      sql.NullString           `json:"username"`
-	AccountType   *accountenum.AccountType `json:"account_type"`
-	Status        sql.NullBool             `json:"status"`
+	Username    sql.NullString           `json:"username"`
+	AccountType *accountenum.AccountType `json:"account_type"`
+	Status      sql.NullBool             `json:"status"`
 }
 
 func (q *Queries) CountAccounts(ctx context.Context, arg CountAccountsParams) (int64, error) {
-	row := q.db.QueryRowContext(ctx, countAccounts,
-		arg.AccountNumber,
-		arg.Username,
-		arg.AccountType,
-		arg.Status,
-	)
+	row := q.db.QueryRowContext(ctx, countAccounts, arg.Username, arg.AccountType, arg.Status)
 	var count int64
 	err := row.Scan(&count)
 	return count, err
@@ -208,13 +201,12 @@ const listAccounts = `-- name: ListAccounts :many
 SELECT id, username, account_number, status, balance, account_type, created_at, updated_at
 FROM accounts
 WHERE
-account_number = coalesce($3, account_number)
-AND username = coalesce($4, username)
-AND account_type = coalesce($5, account_type)
-AND status = coalesce($6, status)
+username = coalesce($3, username)
+AND account_type = coalesce($4, account_type)
+AND status = coalesce($5, status)
 ORDER BY
-(case when $7 = 'id' and $8 = 'ASC' then id end),
-(case when $7 = 'id' and $8 = 'DESC' then id end) desc
+(case when $6 = 'id' and $7 = 'ASC' then id end),
+(case when $6 = 'id' and $7 = 'DESC' then id end) desc
 LIMIT $1
 OFFSET $2
 `
@@ -222,7 +214,6 @@ OFFSET $2
 type ListAccountsParams struct {
 	Limit         int32                    `json:"limit"`
 	Offset        int32                    `json:"offset"`
-	AccountNumber sql.NullString           `json:"account_number"`
 	Username      sql.NullString           `json:"username"`
 	AccountType   *accountenum.AccountType `json:"account_type"`
 	Status        sql.NullBool             `json:"status"`
@@ -234,7 +225,6 @@ func (q *Queries) ListAccounts(ctx context.Context, arg ListAccountsParams) ([]A
 	rows, err := q.db.QueryContext(ctx, listAccounts,
 		arg.Limit,
 		arg.Offset,
-		arg.AccountNumber,
 		arg.Username,
 		arg.AccountType,
 		arg.Status,

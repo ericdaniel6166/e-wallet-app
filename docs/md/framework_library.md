@@ -5,6 +5,46 @@
   - generate idiomatic Golang codes, which uses the standard database/sql library
   - catch SQL errors before generating codes (sqlx failure won't occur until runtime)
   - only full supports Postgres
+- JWT
+  - token-based authentication
+  - a base64 encoded string, composed of 3 main parts
+    - the header of the token, include the token type JWT, and the algorithm used to sign the token (ex: HS256)
+    - the payload data include information about the logged-in user (username, issued at, expired at)
+    - the digital signature
+  - digital signature algorithms
+    - Symmetric-key algorithm
+      - same secret key is used to both sign and verify the tokens.
+      - cannot use it in case there’s an external third-party service that wants to verify the token
+    - Asymmetric-key algorithm
+      - a pair of keys:
+        - The private key is used to sign the token 
+        - the public key is used only to verify it. 
+      - can easily share our public key with any external third-party services
+  - Problems of JWT
+    - Weak algorithms
+      - gives developers too many algorithms to choose from, including the algorithms that are already known to be vulnerable
+    - Trivial Forgery
+      - an attacker can just set the alg header to none so the request can bypass the signature verification process.
+      - set the algorithm header to a symmetric-key one
+- PASETO
+  - token-based authentication
+  - PASETO structure
+    - PASETO structure
+      - PASETO version (ex: v2)
+      - the purpose of the token (ex: local (symmetric-key authenticated encryption algorithm) or public (Asymmetric-key))
+      - PASETO payload data (encrypted), can be decrypted using secret key
+        - the payload body. (ex: a simple message and the expiration time of the token)
+        - the nonce value ("number used once",  value that varies with time to verify that specific values are not reused) 
+        that is used in both encryption and message authentication process.
+        - the message authentication tag to authenticate the encrypted message and its associated unencrypted data.
+      - the footer (optional) (not encrypted): can store any public information 
+  - the best-secured alternative to JWT
+    - Strong algorithms
+      - Don't have to choose algorithm, only version of PASETO (ex: v1 or v2)
+        - v1: used for legacy systems that cannot use modern cryptography
+        - v2: more secured and modern algorithms are being used
+    - Non-trivial forgery
+      - algorithm header does not exist anymore, so the attacker cannot set it to none
 - golang-migrate
   - database migration
 - enumer

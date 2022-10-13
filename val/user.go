@@ -11,7 +11,7 @@ var (
 	isHaveUppercaseCharacter              = regexp.MustCompile(`[A-Z]+`).MatchString
 	isHaveNumberCharacter                 = regexp.MustCompile(`[0-9]+`).MatchString
 	isHaveSpecialCharacter                = regexp.MustCompile(`[!@#$%^&*()_+={}\[\]|\\:;"'<,>.?/-]+`).MatchString
-	isValidLengthUsername                 = regexp.MustCompile(`^[a-zA-Z0-9][._-a-zA-Z0-9]{6,18}[a-zA-Z0-9]$`).MatchString
+	isValidLengthUsername                 = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9._-]{6,18}[a-zA-Z0-9]$`).MatchString
 	isSpecialCharacterAppearConsecutively = regexp.MustCompile(`[._-][._-]`).MatchString
 )
 
@@ -23,7 +23,9 @@ var (
 // 5. The number of characters must be between 8 and 20.
 var validUsername validator.Func = func(fieldLevel validator.FieldLevel) bool {
 	if username, ok := fieldLevel.Field().Interface().(string); ok {
-		return isValidLengthUsername(username) && !isSpecialCharacterAppearConsecutively(username)
+		length := isValidLengthUsername(username)
+		special := isSpecialCharacterAppearConsecutively(username)
+		return length && !special
 	}
 	return false
 }

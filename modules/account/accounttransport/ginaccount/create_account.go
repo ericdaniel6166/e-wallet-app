@@ -25,6 +25,8 @@ func CreateAccount(appCtx component.AppContext) gin.HandlerFunc {
 			panic(common.ErrInvalidRequest(err))
 			return
 		}
+		requester := ctx.MustGet(common.CurrentUser).(common.Requester)
+		req.Username = requester.GetUsername()
 
 		store := accountstore.NewSqlStore(appCtx.GetMainDBConnection())
 		repo := accountrepo.NewAccountRepo(store)

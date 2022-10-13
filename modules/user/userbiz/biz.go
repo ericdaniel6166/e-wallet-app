@@ -2,8 +2,11 @@ package userbiz
 
 import (
 	"context"
+	"e-wallet-app/component"
+	"e-wallet-app/component/token"
 	db "e-wallet-app/db/sqlc"
 	"e-wallet-app/modules/user/usermodel"
+	"time"
 )
 
 type UserRepo interface {
@@ -13,9 +16,16 @@ type UserRepo interface {
 }
 
 type userBiz struct {
-	repo UserRepo
+	repo       UserRepo
+	appCtx     component.AppContext
+	tokenMaker token.Maker
+	duration   time.Duration
 }
 
 func NewUserBiz(repo UserRepo) *userBiz {
 	return &userBiz{repo: repo}
+}
+
+func NewFullUserBiz(repo UserRepo, appCtx component.AppContext, tokenMaker token.Maker, duration time.Duration) *userBiz {
+	return &userBiz{repo: repo, appCtx: appCtx, tokenMaker: tokenMaker, duration: duration}
 }

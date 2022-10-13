@@ -9,36 +9,24 @@ import (
 )
 
 func (store *sqlStore) List(ctx context.Context, filter *accountmodel.AccountFilter,
-	paging *common.Paging, sort *common.Sorting,
+	paging *common.Paging, sort *common.Sorting, requester common.Requester,
 ) ([]db.Account, error) {
 	var (
-		err           error
-		username      sql.NullString
-		accountNumber sql.NullString
-		status        = sql.NullBool{
+		err      error
+		username = sql.NullString{
+			String: requester.GetUsername(),
+			Valid:  true,
+		}
+		status = sql.NullBool{
 			Bool:  true,
 			Valid: true,
 		}
 	)
 
-	if filter.Username != nil {
-		username = sql.NullString{
-			String: *filter.Username,
-			Valid:  true,
-		}
-	}
-	if filter.AccountNumber != nil {
-		accountNumber = sql.NullString{
-			String: *filter.AccountNumber,
-			Valid:  true,
-		}
-	}
-
 	paging.Total, err = store.CountAccounts(ctx, db.CountAccountsParams{
-		Username:      username,
-		AccountType:   filter.AccountType,
-		AccountNumber: accountNumber,
-		Status:        status,
+		Username:    username,
+		AccountType: filter.AccountType,
+		Status:      status,
 	})
 	if err != nil {
 		return nil, common.ErrDB(err)
@@ -47,7 +35,6 @@ func (store *sqlStore) List(ctx context.Context, filter *accountmodel.AccountFil
 	accounts, err := store.ListAccounts(ctx, db.ListAccountsParams{
 		Username:      username,
 		AccountType:   filter.AccountType,
-		AccountNumber: accountNumber,
 		Status:        status,
 		Limit:         paging.PageSize,
 		Offset:        paging.PageSize * (paging.PageNumber - 1),

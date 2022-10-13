@@ -14,5 +14,6 @@ func UserRouter(appCtx component.AppContext, r *gin.RouterGroup) {
 	var a = r.Group(userPath)
 	{
 		a.POST("", ginuser.CreateUser(appCtx))
+		a.POST("/login", ginuser.Login(appCtx))
 	}
 }
