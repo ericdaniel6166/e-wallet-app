@@ -13,7 +13,6 @@ migrate_up:
 migrate_up_1:
 	migrate -path db/migration -database "postgresql://root:123456789@localhost:5432/e_wallet_app_v1?sslmode=disable" -verbose up 1
 
-
 migrate_down:
 	migrate -path db/migration -database "postgresql://root:123456789@localhost:5432/e_wallet_app_v1?sslmode=disable" -verbose down
 
