@@ -1,4 +1,4 @@
-##### Framework/Library
+##### Framework/Library/Technologies
 - Gin
   - HTTP web framework
 - sqlc
@@ -60,3 +60,6 @@
 - gomock
   - mocking framework
 - CI (Github Actions)
+- [Docker](docker.md)
+- ./wait-for 
+  - a script designed to synchronize services like docker containers. 

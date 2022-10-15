@@ -1,0 +1,44 @@
+- Docker
+  - an open platform for developing, shipping, and running applications
+  - separate applications from infrastructure to deliver software quickly
+  - manage infrastructure in the same ways as manage applications
+  - reduce the delay between writing code and running it in production.
+  - Docker Container
+- Docker platform
+  - package and run an application in a loosely isolated environment called a container
+  - Containers are lightweight and contain everything needed to run the application, 
+  so it does not rely on what is currently installed on the host
+  - easily share containers, and others gets the same container that works in the same way.
+  - provides tooling and a platform to manage the lifecycle of containers
+  - Containers are lightweight and contain everything needed to run the application, 
+    - Develop application and its supporting components using containers.
+    - Develop your application and its supporting components using containers.
+    - The container becomes the unit for distributing and testing application
+    - When ready, deploy application into production environment, as a container or an orchestrated service.
+      This works the same whether production environment is a local data center, a cloud provider, or a hybrid of the two
+- Use cases
+  - Fast, consistent delivery of applications
+  - Responsive deployment and scaling 
+  - Running more workloads on the same hardware
+- Docker architecture
+  - uses a client-server architecture 
+- Docker daemon 
+  - listens for Docker API requests and manages Docker objects such as images, containers, networks, and volumes
+  - can also communicate with other daemons to manage Docker services
+- Docker client
+  - is the primary way that many Docker users interact with Docker
+  - sends these commands to the Docker daemon
+- Docker registries 
+  - stores Docker images 
+  - Docker Hub is a public registry that anyone can use
+  - Docker daemon 
+  - Docker daemon 
+- Docker objects
+  - Docker Images 
+    - a read-only template with instructions for creating a Docker container 
+  - Docker Containers 
+    - a runnable instance of an imag
+- Dockerfile
+  - Docker can build images automatically by reading the instructions from a Dockerfile
+- Docker Compose file
+  - a YAML file defining services, networks, and volumes for a Docker application
