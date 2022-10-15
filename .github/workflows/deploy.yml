@@ -4,12 +4,6 @@ on:
   workflow_run:
     workflows: [ "Run unit tests" ]
     types: [ completed ] #requested
-#  push:
-#    branches:
-#      - main
-#      - 'feature/**'
-#      - 'bugfix/**'
-#      - 'hotfix/**'
 
 jobs:
   deploy:
