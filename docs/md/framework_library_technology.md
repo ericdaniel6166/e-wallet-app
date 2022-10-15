@@ -1,4 +1,4 @@
-##### Framework/Library/Technologies
+##### Framework/Library/Technology
 - Gin
   - HTTP web framework
 - sqlc
