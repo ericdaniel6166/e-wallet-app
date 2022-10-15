@@ -2,8 +2,13 @@ name: Deploy to production
 
 on:
   workflow_run:
-    workflows: [ "Test" ]
+    workflows: [ "Run unit tests" ]
     types: [ completed ] #requested
+    branches:
+      - main
+      - 'feature/**'
+      - 'bugfix/**'
+      - 'hotfix/**'
 #  push:
 #    branches:
 #      - main
