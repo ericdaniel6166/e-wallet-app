@@ -37,7 +37,7 @@
   - Docker Images 
     - a read-only template with instructions for creating a Docker container 
   - Docker Containers 
-    - a runnable instance of an imag
+    - a runnable instance of an image
 - Dockerfile
   - Docker can build images automatically by reading the instructions from a Dockerfile
 - Docker Compose file
