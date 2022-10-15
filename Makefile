@@ -10,9 +10,6 @@ drop_db:
 migrate_up:
 	migrate -path db/migration -database "postgresql://root:123456789@localhost:5432/e_wallet_app_v1?sslmode=disable" -verbose up
 
-aws_migrate_up:
-	migrate -path db/migration -database "postgresql://root:XKhsqsLnVoSO4q2ix2Bn@e-wallet-app.cudifdjlfrok.us-east-1.rds.amazonaws.com:5432/e_wallet_app_v1" -verbose up
-
 migrate_up_1:
 	migrate -path db/migration -database "postgresql://root:123456789@localhost:5432/e_wallet_app_v1?sslmode=disable" -verbose up 1
 
@@ -46,4 +43,4 @@ docker_network:
 docker_run:
 	docker run --name e-wallet-app-v1 --network e-wallet-app-network -p 8080:8080 -e GIN_MODE=release -e DB_SOURCE="postgresql://root:123456789@e-wallet-app-postgres:5432/e_wallet_app_v1?sslmode=disable" e-wallet-app:latest
 
-.PHONY: postgres_run create_db drop_db migrate_up migrate_up_1 migrate_down migrate_down_1 migrate_create sqlc_generate sqlc_compile test server docker_build aws_migrate_up
+.PHONY: postgres_run create_db drop_db migrate_up migrate_up_1 migrate_down migrate_down_1 migrate_create sqlc_generate sqlc_compile test server docker_build
