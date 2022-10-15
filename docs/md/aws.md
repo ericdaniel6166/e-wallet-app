@@ -6,3 +6,6 @@
 - AWS IAM
   - AWS Identity and Access Management
   - AWS service, control access to AWS resources 
+- AWS RDS
+  - Amazon Relational Database Service
+  - set up, operate, and scale a relational database in the AWS Cloud
