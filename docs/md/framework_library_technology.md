@@ -61,5 +61,6 @@
   - mocking framework
 - CI (Github Actions)
 - [Docker](docker.md)
+- [AWS](aws.md)
 - ./wait-for 
   - a script designed to synchronize services like docker containers. 
