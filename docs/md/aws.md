@@ -6,6 +6,13 @@
 - AWS IAM
   - AWS Identity and Access Management
   - AWS service, control access to AWS resources 
+  - Identities
+    - IAM User, is an entity that is created in AWS to represent the person or application 
+    that used it to interact with AWS, consists of a name and credentials
+    - IAM User Group, is a collection of users, help specify permissions for multiple users
+    - IAM Role, is used to grant specific permissions to specific actors (
+      - not have password, access key, belong to a group
+      - can be associated with AWS resource
 - AWS RDS
   - Amazon Relational Database Service
   - set up, operate, and scale a relational database in the AWS Cloud
