@@ -16,7 +16,8 @@ spec:
     spec:
       containers:
       - name: e-wallet-app-api
-        image: public.ecr.aws/n0w1k7c7/e-wallet-app:latest
+#        image: public.ecr.aws/n0w1k7c7/e-wallet-app:latest
+        image: public.ecr.aws/n0w1k7c7/e-wallet-app:e91fb3e6b310c6d2d20a096c0152bf4df2e31a34
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
