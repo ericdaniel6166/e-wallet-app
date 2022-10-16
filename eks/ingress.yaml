@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  name: nginx
+spec:
+  controller: k8s.io/ingress-nginx
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: e-wallet-app-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: "api.eric6166-e-wallet-app.org"
+#  - host: "a8d18e1240b7b4de59e13f1243ab6020-458203700.us-east-2.elb.amazonaws.com"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: e-wallet-app-api-service
+            port:
+              number: 80
+  tls:
+  - hosts:
+    - api.eric6166-e-wallet-app.org
+    secretName: e-wallet-app-api-cert
