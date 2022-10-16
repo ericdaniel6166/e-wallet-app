@@ -4,7 +4,6 @@
   - separate applications from infrastructure to deliver software quickly
   - manage infrastructure in the same ways as manage applications
   - reduce the delay between writing code and running it in production.
-  - Docker Container
 - Docker platform
   - package and run an application in a loosely isolated environment called a container
   - Containers are lightweight and contain everything needed to run the application, 
