@@ -42,7 +42,7 @@ jobs:
           REPOSITORY: e-wallet-app
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG -t latest .
+          docker build -t $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG -t $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:latest .
           docker push -a $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY
 
 #      - name: Update kube config
