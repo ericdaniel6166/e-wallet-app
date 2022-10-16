@@ -59,7 +59,14 @@
   - Unit test
 - gomock
   - mocking framework
-- CI (Github Actions)
+- CI-CD (Github Actions)
+- cert-manager
+  - it adds certificates and certificate issuers as resource types in Kubernetes clusters 
+  - simplifies the process of obtaining, renewing and using those certificates
+  - can issue certificates from a variety of supported sources, including Let's Encrypt, 
+  HashiCorp Vault, and Venafi as well as private PKI
+- Let's Encrypt 
+  - is a free, automated, and open certificate authority
 - [Docker](docker.md)
 - [Kubernetes](kubernetes.md)
 - [AWS](aws.md)

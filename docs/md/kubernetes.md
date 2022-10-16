@@ -29,3 +29,16 @@
   - Use to deploy applications, inspect and manage cluster resources, and view logs
 - K9s
   - a terminal based UI to interact with Kubernetes cluster
+- Ingress
+  - An API object that manages external access to the services in a cluster, typically HTTP.
+  - Ingress may provide load balancing, SSL termination and name-based virtual hosting.
+  - Ingress controllers
+    - is a specialized load balancer for Kubernetes (and other containerized) environments
+    - abstracts away the complexity of Kubernetes application traffic routing 
+    and provides a bridge between Kubernetes services and external ones
+    - In order for the Ingress resource to work, the cluster must have an ingress controller running.
+    - Ingress controllers are not started automatically with a cluster.
+    - NGINX Ingress Controller is production‑grade Ingress controller (daemon) 
+    that runs alongside NGINX Open Source or NGINX Plus instances in a Kubernetes environment.
+  - 
+  - 
