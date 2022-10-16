@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: e-wallet-app-api-deployment
+  labels:
+    app: e-wallet-app-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: e-wallet-app-api
+  template:
+    metadata:
+      labels:
+        app: e-wallet-app-api
+    spec:
+      containers:
+      - name: e-wallet-app-api
+        image: public.ecr.aws/n0w1k7c7/e-wallet-app:cdcba66dcd35e92ca4155e261b0102c77be26d1b
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080

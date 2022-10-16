@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: e-wallet-app-api-service
+spec:
+  selector:
+    app: e-wallet-app-api
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+#  type: ClusterIP
+  type: LoadBalancer
