@@ -25,3 +25,9 @@
   without needing to install, operate, and maintain Kubernetes control plane or nodes
   - Kubernetes is an open source system 
   for automating the deployment, scaling, and management of containerized applications 
+- AWS Route 53
+  - a highly available and scalable DNS (Domain Name System) Service 
+  - 3 main functions:
+    - domain registration
+    - DNS routing (Routing internet traffic to the resources for domain)
+    - health checking (Check the health of resources, to verify that it's reachable, available, and functional)
