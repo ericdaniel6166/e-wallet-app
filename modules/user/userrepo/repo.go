@@ -3,6 +3,7 @@ package userrepo
 import (
 	"context"
 	db "e-wallet-app/db/sqlc"
+	"e-wallet-app/modules/session/sessionmodel"
 	"e-wallet-app/modules/user/usermodel"
 )
 
@@ -12,10 +13,20 @@ type UserStore interface {
 	GetByEmail(ctx context.Context, email string) (*db.User, error)
 }
 
-type userRepo struct {
-	store UserStore
+type SessionStore interface {
+	Create(ctx context.Context, req *sessionmodel.CreateSessionRequest) (*db.Session, error)
+	Get(ctx context.Context, req *sessionmodel.GetSessionRequest) (*db.Session, error)
 }
 
-func NewUserRepo(store UserStore) *userRepo {
-	return &userRepo{store: store}
+type userRepo struct {
+	userStore    UserStore
+	sessionStore SessionStore
+}
+
+func NewUserRepo(userStore UserStore) *userRepo {
+	return &userRepo{userStore: userStore}
+}
+
+func NewFullUserRepo(userStore UserStore, sessionStore SessionStore) *userRepo {
+	return &userRepo{userStore: userStore, sessionStore: sessionStore}
 }

@@ -15,5 +15,6 @@ func UserRouter(appCtx component.AppContext, r *gin.RouterGroup) {
 	{
 		a.POST("", ginuser.CreateUser(appCtx))
 		a.POST("/login", ginuser.Login(appCtx))
+		a.POST("/renew-access-token", ginuser.RenewAccessToken(appCtx))
 	}
 }

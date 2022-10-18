@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"e-wallet-app/modules/account/accountenum"
+	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 )
 
@@ -28,6 +29,19 @@ type Entry struct {
 	// can be negative or positive
 	Amount    *decimal.Decimal `json:"amount"`
 	CreatedAt time.Time        `json:"created_at"`
+}
+
+type Session struct {
+	ID               int64     `json:"id"`
+	Username         string    `json:"username"`
+	RefreshTokenUuid uuid.UUID `json:"refresh_token_uuid"`
+	RefreshToken     string    `json:"refresh_token"`
+	UserAgent        string    `json:"user_agent"`
+	ClientIp         string    `json:"client_ip"`
+	Status           bool      `json:"status"`
+	ExpiresAt        time.Time `json:"expires_at"`
+	CreatedAt        time.Time `json:"created_at"`
+	UpdatedAt        time.Time `json:"updated_at"`
 }
 
 type Transfer struct {

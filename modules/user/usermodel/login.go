@@ -2,13 +2,18 @@ package usermodel
 
 import (
 	"e-wallet-app/common"
+	"e-wallet-app/component/token"
 	"errors"
 	"time"
 )
 
 type LoginRequest struct {
-	Username string `json:"username" binding:"required"`
-	Password string `json:"password" binding:"required"`
+	Username       string `json:"username" binding:"required"`
+	Password       string `json:"password" binding:"required"`
+	RefreshToken   string
+	RefreshPayload *token.Payload
+	UserAgent      string
+	ClientIP       string
 }
 
 type LoginResponse struct {
@@ -26,3 +31,10 @@ var (
 		"ErrUsernameOrPasswordInvalid",
 	)
 )
+
+func (req *LoginRequest) FillDefault() {
+	req.RefreshToken = ""
+	req.RefreshPayload = nil
+	req.UserAgent = ""
+	req.ClientIP = ""
+}
