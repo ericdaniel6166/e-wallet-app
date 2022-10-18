@@ -8,9 +8,9 @@ import (
 
 func (repo *userRepo) Create(ctx context.Context, req *usermodel.CreateUserRequest,
 ) (*db.User, error) {
-	res, err := repo.store.Create(ctx, req)
+	user, err := repo.userStore.Create(ctx, req)
 	if err != nil {
 		return nil, err
 	}
-	return res, nil
+	return user, nil
 }

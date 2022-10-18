@@ -23,9 +23,9 @@ func main() {
 	}
 
 	appCtx := component.NewAppContext(conn, config.Version, config.HttpServerAddress,
-		config.TokenSymmetricKey, config.AccessTokenDuration)
+		config.TokenSymmetricKey, config.AccessTokenDuration, config.RefreshTokenDuration)
 
-	if err := runService(appCtx); err != nil {
+	if err = runService(appCtx); err != nil {
 		log.Fatalln(err)
 	}
 

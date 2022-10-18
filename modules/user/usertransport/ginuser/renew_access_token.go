@@ -13,9 +13,9 @@ import (
 	"net/http"
 )
 
-func Login(appCtx component.AppContext) gin.HandlerFunc {
+func RenewAccessToken(appCtx component.AppContext) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var req usermodel.LoginRequest
+		var req usermodel.RenewAccessTokenRequest
 
 		if err := ctx.ShouldBind(&req); err != nil {
 			panic(common.ErrInvalidRequest(err))
@@ -31,11 +31,9 @@ func Login(appCtx component.AppContext) gin.HandlerFunc {
 		userStore := userstore.NewSqlStore(appCtx.GetMainDBConnection())
 		sessionStore := sessionstore.NewSqlStore(appCtx.GetMainDBConnection())
 		repo := userrepo.NewFullUserRepo(userStore, sessionStore)
+		biz := userbiz.NewFullUserBiz(repo, appCtx, tokenMaker, appCtx.AccessTokenDuration(), nil)
 
-		duration := appCtx.RefreshTokenDuration()
-		biz := userbiz.NewFullUserBiz(repo, appCtx, tokenMaker, appCtx.AccessTokenDuration(), &duration)
-
-		res, err := biz.Login(ctx.Request.Context(), &req)
+		res, err := biz.RenewAccessToken(ctx.Request.Context(), &req)
 		if err != nil {
 			panic(err)
 			return
