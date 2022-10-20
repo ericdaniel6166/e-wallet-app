@@ -1,11 +1,12 @@
 -- name: CreateUser :one
 INSERT INTO users (
 username,
+role,
 hashed_password,
 full_name,
 email
 ) VALUES (
- $1, $2, $3, $4
+ $1, $2, $3, $4, $5
 ) RETURNING *;
 
 -- name: GetUserByUsername :one
@@ -22,6 +23,7 @@ SET
 hashed_password = COALESCE(sqlc.narg(hashed_password), hashed_password),
 full_name = COALESCE(sqlc.narg(full_name), full_name),
 email = COALESCE(sqlc.narg(email), email),
+status = COALESCE(sqlc.narg(status), status),
 updated_at = now()
 WHERE
 id = sqlc.arg(id)

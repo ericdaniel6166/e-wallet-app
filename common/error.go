@@ -9,4 +9,5 @@ var (
 	RecordIsBlocked     = errors.New("record is blocked")
 	InsufficientBalance = errors.New("insufficient balance")
 	EntityExists        = errors.New("entity already exists")
+	NoPermission        = errors.New("user has no permission")
 )

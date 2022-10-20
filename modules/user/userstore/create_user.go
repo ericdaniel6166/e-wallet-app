@@ -13,6 +13,7 @@ func (store *sqlStore) Create(ctx context.Context, req *usermodel.CreateUserRequ
 		HashedPassword: req.Password,
 		FullName:       req.FullName,
 		Email:          req.Email,
+		Role:           req.Role,
 	})
 	if err != nil {
 		return nil, common.ErrDB(err)

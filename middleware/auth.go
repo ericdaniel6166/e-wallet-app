@@ -4,6 +4,8 @@ import (
 	"e-wallet-app/common"
 	"e-wallet-app/component"
 	"e-wallet-app/component/token"
+	"e-wallet-app/modules/user/userenum"
+	"e-wallet-app/modules/user/usermodel"
 	"e-wallet-app/modules/user/userstore"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -37,10 +39,10 @@ func extractTokenFromHeaderString(s string) (string, error) {
 // RequiredAuth
 // 1. Get token from header
 // 2. Validate token and parse to payload
-// 3. From the token payload, we use user_id to find from DB
-func RequiredAuth(appCtx component.AppContext) func(c *gin.Context) {
-	//tokenProvider, err := token.NewJWTMaker(appCtx.TokenSymmetricKey())
-	tokenProvider, err := token.NewPasetoMaker(appCtx.TokenSymmetricKey())
+// 3. From the token payload, we use username to find from DB
+func RequiredAuth(appCtx component.AppContext, role userenum.Role) gin.HandlerFunc {
+	//tokenMaker, err := token.NewJWTMaker(appCtx.TokenSymmetricKey())
+	tokenMaker, err := token.NewPasetoMaker(appCtx.TokenSymmetricKey())
 	if err != nil {
 		panic(common.ErrUnauthorized(err))
 	}
@@ -53,22 +55,22 @@ func RequiredAuth(appCtx component.AppContext) func(c *gin.Context) {
 			panic(common.ErrUnauthorized(err))
 		}
 
+		payload, err := tokenMaker.VerifyToken(tok)
+		if err != nil {
+			panic(common.ErrUnauthorized(err))
+		}
+
 		store := userstore.NewSqlStore(appCtx.GetMainDBConnection())
-
-		payload, err := tokenProvider.VerifyToken(tok)
-		if err != nil {
-			panic(common.ErrUnauthorized(err))
-		}
-
 		user, err := store.GetUserByUsername(ctx.Request.Context(), payload.Username)
+		//101&001 =001 == 001
 
-		if err != nil {
-			panic(common.ErrUnauthorized(err))
+		if !(user.GetRole()&role == role) {
+			panic(common.ErrNoPermission(common.NoPermission))
 		}
 
-		//if user.Status == false {
-		//	panic(common.ErrNoPermission(fmt.Errorf("user with username %s is blocked", payload.Username)))
-		//}
+		if user.Status == false {
+			panic(common.ErrNoPermission(common.ErrEntityBlocked(usermodel.EntityName, common.RecordIsBlocked)))
+		}
 
 		ctx.Set(common.CurrentUser, user)
 		ctx.Next()

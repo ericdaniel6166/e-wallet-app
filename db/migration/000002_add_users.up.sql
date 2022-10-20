@@ -4,6 +4,8 @@ create table users
         primary key,
     username        varchar(255)                           not null
         unique,
+    status          boolean                  default true  not null,
+    role            int                                    not null,
     hashed_password varchar(255)                           not null,
     full_name       varchar(255)                           not null,
     email           varchar(255)                           not null

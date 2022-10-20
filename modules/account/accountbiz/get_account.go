@@ -28,18 +28,3 @@ func (biz *accountBiz) GetByAccountNumber(ctx context.Context, accountNumber str
 	}
 	return account, nil
 }
-
-func (biz *accountBiz) GetByID(ctx context.Context, id int64) (*db.Account, error) {
-	account, err := biz.repo.GetByID(ctx, id)
-	if err != nil {
-		if err == common.RecordNotFound {
-			return nil, common.ErrEntityNotFound(accountmodel.EntityName, err)
-		}
-		return nil, common.ErrCannotGetEntity(accountmodel.EntityName, err)
-	}
-
-	if account.Status == false {
-		return nil, common.ErrEntityBlocked(accountmodel.EntityName, common.RecordIsBlocked)
-	}
-	return account, nil
-}

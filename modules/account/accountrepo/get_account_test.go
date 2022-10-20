@@ -11,22 +11,22 @@ import (
 	"testing"
 )
 
-type getByIDDataTable struct {
-	name       string
-	id         int64
-	buildStubs func(store *mockaccountstore.MockAccountStore)
-	expect     func(t *testing.T, actual *db.Account, err error)
+type getByAccountNumberDataTable struct {
+	name          string
+	accountNumber string
+	buildStubs    func(store *mockaccountstore.MockAccountStore)
+	expect        func(t *testing.T, actual *db.Account, err error)
 }
 
-func TestGetByID(t *testing.T) {
+func TestGetByAccountNumber(t *testing.T) {
 	account := accountutil.RandomAccount()
 
-	tests := []getByIDDataTable{
+	tests := []getByAccountNumberDataTable{
 		{
-			name: "ok",
-			id:   account.ID,
+			name:          "ok",
+			accountNumber: account.AccountNumber,
 			buildStubs: func(store *mockaccountstore.MockAccountStore) {
-				store.EXPECT().GetByID(gomock.Any(), gomock.Eq(account.ID)).Times(1).Return(&account, nil)
+				store.EXPECT().GetByAccountNumber(gomock.Any(), gomock.Eq(account.AccountNumber)).Times(1).Return(&account, nil)
 			},
 			expect: func(t *testing.T, actual *db.Account, err error) {
 				require.NoError(t, err)
@@ -35,10 +35,10 @@ func TestGetByID(t *testing.T) {
 			},
 		},
 		{
-			name: "record not found",
-			id:   account.ID,
+			name:          "record not found",
+			accountNumber: account.AccountNumber,
 			buildStubs: func(store *mockaccountstore.MockAccountStore) {
-				store.EXPECT().GetByID(gomock.Any(), gomock.Eq(account.ID)).Times(1).Return(nil, common.RecordNotFound)
+				store.EXPECT().GetByAccountNumber(gomock.Any(), gomock.Eq(account.AccountNumber)).Times(1).Return(nil, common.RecordNotFound)
 			},
 			expect: func(t *testing.T, actual *db.Account, err error) {
 				require.Nil(t, actual)
@@ -48,7 +48,7 @@ func TestGetByID(t *testing.T) {
 		},
 	}
 
-	var test getByIDDataTable
+	var test getByAccountNumberDataTable
 	for i := range tests {
 		test = tests[i]
 		t.Run(test.name, func(t *testing.T) {
@@ -58,7 +58,7 @@ func TestGetByID(t *testing.T) {
 			test.buildStubs(store)
 			repo := NewAccountRepo(store)
 
-			actual, err := repo.GetByID(context.Background(), test.id)
+			actual, err := repo.GetByAccountNumber(context.Background(), test.accountNumber)
 
 			test.expect(t, actual, err)
 		})

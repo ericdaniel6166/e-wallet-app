@@ -13,27 +13,27 @@ import (
 	"testing"
 )
 
-type getByIDDataTable struct {
+type getByAccountNumberDataTable struct {
 	name       string
-	request    accountmodel.GetAccountByIDRequest
+	request    accountmodel.GetAccountByAccountNumberRequest
 	buildStubs func(repo *mockaccountrepo.MockAccountRepo)
 	expect     func(t *testing.T, actual *db.Account, err error)
 }
 
 func TestGetByID(t *testing.T) {
 	account := accountutil.RandomAccount()
-	req := accountmodel.GetAccountByIDRequest{
-		ID: account.ID,
+	req := accountmodel.GetAccountByAccountNumberRequest{
+		AccountNumber: account.AccountNumber,
 	}
 	blockedAccount := account
 	blockedAccount.Status = false
 
-	tests := []getByIDDataTable{
+	tests := []getByAccountNumberDataTable{
 		{
 			name:    "ok",
 			request: req,
 			buildStubs: func(repo *mockaccountrepo.MockAccountRepo) {
-				repo.EXPECT().GetByID(gomock.Any(), gomock.Eq(account.ID)).Times(1).Return(&account, nil)
+				repo.EXPECT().GetByAccountNumber(gomock.Any(), gomock.Eq(account.AccountNumber)).Times(1).Return(&account, nil)
 			},
 			expect: func(t *testing.T, actual *db.Account, err error) {
 				require.NoError(t, err)
@@ -44,7 +44,7 @@ func TestGetByID(t *testing.T) {
 			name:    "error account not found",
 			request: req,
 			buildStubs: func(repo *mockaccountrepo.MockAccountRepo) {
-				repo.EXPECT().GetByID(gomock.Any(), gomock.Eq(account.ID)).Times(1).Return(nil, common.RecordNotFound)
+				repo.EXPECT().GetByAccountNumber(gomock.Any(), gomock.Eq(account.AccountNumber)).Times(1).Return(nil, common.RecordNotFound)
 			},
 			expect: func(t *testing.T, actual *db.Account, err error) {
 				require.Nil(t, actual)
@@ -55,7 +55,7 @@ func TestGetByID(t *testing.T) {
 			name:    "error database",
 			request: req,
 			buildStubs: func(repo *mockaccountrepo.MockAccountRepo) {
-				repo.EXPECT().GetByID(gomock.Any(), gomock.Eq(account.ID)).Times(1).Return(nil, common.ErrDB(errors.New("error db")))
+				repo.EXPECT().GetByAccountNumber(gomock.Any(), gomock.Eq(account.AccountNumber)).Times(1).Return(nil, common.ErrDB(errors.New("error db")))
 			},
 			expect: func(t *testing.T, actual *db.Account, err error) {
 				require.Nil(t, actual)
@@ -66,7 +66,7 @@ func TestGetByID(t *testing.T) {
 			name:    "error account is blocked",
 			request: req,
 			buildStubs: func(repo *mockaccountrepo.MockAccountRepo) {
-				repo.EXPECT().GetByID(gomock.Any(), gomock.Eq(account.ID)).Times(1).Return(&blockedAccount, nil)
+				repo.EXPECT().GetByAccountNumber(gomock.Any(), gomock.Eq(account.AccountNumber)).Times(1).Return(&blockedAccount, nil)
 			},
 			expect: func(t *testing.T, actual *db.Account, err error) {
 				require.Nil(t, actual)
@@ -75,7 +75,7 @@ func TestGetByID(t *testing.T) {
 		},
 	}
 
-	var test getByIDDataTable
+	var test getByAccountNumberDataTable
 	for i := range tests {
 		test = tests[i]
 		t.Run(test.name, func(t *testing.T) {
@@ -84,7 +84,7 @@ func TestGetByID(t *testing.T) {
 			repo := mockaccountrepo.NewMockAccountRepo(ctrl)
 			test.buildStubs(repo)
 			biz := NewAccountBiz(repo)
-			actual, err := biz.GetByID(context.Background(), account.ID)
+			actual, err := biz.GetByAccountNumber(context.Background(), account.AccountNumber)
 			test.expect(t, actual, err)
 		})
 	}

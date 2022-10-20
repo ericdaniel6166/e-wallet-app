@@ -1,3 +1,5 @@
+DB_URL=postgresql://root:123456789@localhost:5432/e_wallet_app_v1?sslmode=disable
+
 postgres_run:
 	docker run --name e-wallet-app-postgres --network e-wallet-app-network -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=123456789 -d postgres:14.5-alpine
 
@@ -8,22 +10,22 @@ drop_db:
 	docker exec -it e-wallet-app-postgres dropdb e_wallet_app_v1
 
 migrate_up:
-	migrate -path db/migration -database "postgresql://root:123456789@localhost:5432/e_wallet_app_v1?sslmode=disable" -verbose up
+	migrate -path db/migration -database "$(DB_URL)" -verbose up
 
 aws_migrate_up:
 	migrate -path db/migration -database "postgresql://root:XKhsqsLnVoSO4q2ix2Bn@e-wallet-app.cudifdjlfrok.us-east-1.rds.amazonaws.com:5432/e_wallet_app_v1" -verbose up
 
 migrate_up_1:
-	migrate -path db/migration -database "postgresql://root:123456789@localhost:5432/e_wallet_app_v1?sslmode=disable" -verbose up 1
+	migrate -path db/migration -database "$(DB_URL)" -verbose up 1
 
 migrate_down:
-	migrate -path db/migration -database "postgresql://root:123456789@localhost:5432/e_wallet_app_v1?sslmode=disable" -verbose down
+	migrate -path db/migration -database "$(DB_URL)" -verbose down
 
 migrate_down_1:
-	migrate -path db/migration -database "postgresql://root:123456789@localhost:5432/e_wallet_app_v1?sslmode=disable" -verbose down 1
+	migrate -path db/migration -database "$(DB_URL)" -verbose down 1
 
 migrate_create:
-	migrate -path db/migration -database "postgresql://root:123456789@localhost:5432/e_wallet_app_v1?sslmode=disable" create -ext sql -dir db/migration -seq init_schema
+	migrate -path db/migration -database "$(DB_URL)" create -ext sql -dir db/migration -seq init_schema
 
 sqlc_generate:
 	docker run --rm -v "$(CURDIR):/src" -w //src kjconroy/sqlc generate
