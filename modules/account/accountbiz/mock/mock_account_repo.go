@@ -67,21 +67,6 @@ func (mr *MockAccountRepoMockRecorder) GetByAccountNumber(arg0, arg1 interface{}
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByAccountNumber", reflect.TypeOf((*MockAccountRepo)(nil).GetByAccountNumber), arg0, arg1)
 }
 
-// GetByID mocks base method.
-func (m *MockAccountRepo) GetByID(arg0 context.Context, arg1 int64) (*db.Account, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetByID", arg0, arg1)
-	ret0, _ := ret[0].(*db.Account)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetByID indicates an expected call of GetByID.
-func (mr *MockAccountRepoMockRecorder) GetByID(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByID", reflect.TypeOf((*MockAccountRepo)(nil).GetByID), arg0, arg1)
-}
-
 // List mocks base method.
 func (m *MockAccountRepo) List(arg0 context.Context, arg1 *accountmodel.AccountFilter, arg2 *common.Paging, arg3 *common.Sorting, arg4 common.Requester) ([]db.Account, error) {
 	m.ctrl.T.Helper()

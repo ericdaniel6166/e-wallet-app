@@ -7,7 +7,7 @@ import (
 )
 
 type CreateAccountRequest struct {
-	Username      string                  `json:"username"`
+	Username      string
 	AccountNumber string                  `json:"account_number" binding:"required,account_number"`
 	Balance       *decimal.Decimal        `json:"balance"`
 	AccountType   accountenum.AccountType `json:"account_type" binding:"required"`

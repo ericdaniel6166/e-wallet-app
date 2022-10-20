@@ -56,6 +56,8 @@ type Transfer struct {
 type User struct {
 	ID             int64     `json:"id"`
 	Username       string    `json:"username"`
+	Status         bool      `json:"status"`
+	Role           int32     `json:"role"`
 	HashedPassword string    `json:"hashed_password"`
 	FullName       string    `json:"full_name"`
 	Email          string    `json:"email"`

@@ -13,16 +13,18 @@ import (
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (
 username,
+role,
 hashed_password,
 full_name,
 email
 ) VALUES (
- $1, $2, $3, $4
-) RETURNING id, username, hashed_password, full_name, email, updated_at, created_at
+ $1, $2, $3, $4, $5
+) RETURNING id, username, status, role, hashed_password, full_name, email, updated_at, created_at
 `
 
 type CreateUserParams struct {
 	Username       string `json:"username"`
+	Role           int32  `json:"role"`
 	HashedPassword string `json:"hashed_password"`
 	FullName       string `json:"full_name"`
 	Email          string `json:"email"`
@@ -31,6 +33,7 @@ type CreateUserParams struct {
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
 	row := q.db.QueryRowContext(ctx, createUser,
 		arg.Username,
+		arg.Role,
 		arg.HashedPassword,
 		arg.FullName,
 		arg.Email,
@@ -39,6 +42,8 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 	err := row.Scan(
 		&i.ID,
 		&i.Username,
+		&i.Status,
+		&i.Role,
 		&i.HashedPassword,
 		&i.FullName,
 		&i.Email,
@@ -49,7 +54,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 }
 
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, username, hashed_password, full_name, email, updated_at, created_at FROM users
+SELECT id, username, status, role, hashed_password, full_name, email, updated_at, created_at FROM users
 WHERE email = $1
 `
 
@@ -59,6 +64,8 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 	err := row.Scan(
 		&i.ID,
 		&i.Username,
+		&i.Status,
+		&i.Role,
 		&i.HashedPassword,
 		&i.FullName,
 		&i.Email,
@@ -69,7 +76,7 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 }
 
 const getUserByUsername = `-- name: GetUserByUsername :one
-SELECT id, username, hashed_password, full_name, email, updated_at, created_at FROM users
+SELECT id, username, status, role, hashed_password, full_name, email, updated_at, created_at FROM users
 WHERE username = $1
 `
 
@@ -79,6 +86,8 @@ func (q *Queries) GetUserByUsername(ctx context.Context, username string) (User,
 	err := row.Scan(
 		&i.ID,
 		&i.Username,
+		&i.Status,
+		&i.Role,
 		&i.HashedPassword,
 		&i.FullName,
 		&i.Email,
@@ -94,16 +103,18 @@ SET
 hashed_password = COALESCE($1, hashed_password),
 full_name = COALESCE($2, full_name),
 email = COALESCE($3, email),
+status = COALESCE($4, status),
 updated_at = now()
 WHERE
-id = $4
-RETURNING id, username, hashed_password, full_name, email, updated_at, created_at
+id = $5
+RETURNING id, username, status, role, hashed_password, full_name, email, updated_at, created_at
 `
 
 type UpdateUserParams struct {
 	HashedPassword sql.NullString `json:"hashed_password"`
 	FullName       sql.NullString `json:"full_name"`
 	Email          sql.NullString `json:"email"`
+	Status         sql.NullBool   `json:"status"`
 	ID             int64          `json:"id"`
 }
 
@@ -112,12 +123,15 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, e
 		arg.HashedPassword,
 		arg.FullName,
 		arg.Email,
+		arg.Status,
 		arg.ID,
 	)
 	var i User
 	err := row.Scan(
 		&i.ID,
 		&i.Username,
+		&i.Status,
+		&i.Role,
 		&i.HashedPassword,
 		&i.FullName,
 		&i.Email,

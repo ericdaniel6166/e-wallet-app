@@ -6,21 +6,10 @@ account_number) VALUES
 ($1, $2, $3, $4)
 RETURNING *;
 
--- name: GetAccountByID :one
-SELECT *
-FROM accounts
-WHERE id = $1;
-
 -- name: GetAccountByAccountNumber :one
 SELECT *
 FROM accounts
 WHERE account_number = $1;
-
--- name: GetAccountByIDForUpdate :one
-SELECT *
-FROM accounts
-WHERE id = $1
-FOR NO KEY UPDATE;
 
 -- name: ListAccounts :many
 SELECT *
@@ -43,22 +32,13 @@ username = coalesce(sqlc.narg('username'), username)
 AND account_type = coalesce(sqlc.narg('account_type'), account_type)
 AND status = coalesce(sqlc.narg('status'), status);
 
--- name: UpdateAccountStatus :one
+-- name: UpdateAccount :one
 UPDATE accounts
 SET
 status = coalesce(sqlc.narg('status'), status),
 account_type = coalesce(sqlc.narg('account_type'), account_type),
-account_number = coalesce(sqlc.narg('account_number'), account_number),
-username = coalesce(sqlc.narg('username'), username),
 updated_at = now()
-WHERE id = $1
-RETURNING *;
-
--- name: AddAccountBalanceByID :one
-UPDATE accounts
-SET balance = balance + sqlc.arg(amount),
-updated_at = now()
-WHERE id = $1
+WHERE account_number = sqlc.arg(account_number)
 RETURNING *;
 
 -- name: AddAccountBalanceByAccountNumber :one

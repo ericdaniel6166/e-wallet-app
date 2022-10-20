@@ -4,6 +4,7 @@ import (
 	"e-wallet-app/component"
 	"e-wallet-app/middleware"
 	"e-wallet-app/modules/account/accounttransport/ginaccount"
+	"e-wallet-app/modules/user/userenum"
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,10 +13,9 @@ const (
 )
 
 func AccountRouter(appCtx component.AppContext, r *gin.RouterGroup) {
-	var a = r.Group(accountPath, middleware.RequiredAuth(appCtx))
+	var a = r.Group(accountPath, middleware.RequiredAuth(appCtx, userenum.RoleUser))
 	{
 		a.GET("", ginaccount.ListAccount(appCtx))
-		a.GET("/:id", ginaccount.GetAccountByID(appCtx))
 		a.GET("/account-number/:account_number", ginaccount.GetAccountByAccountNumber(appCtx))
 		a.POST("", ginaccount.CreateAccount(appCtx))
 

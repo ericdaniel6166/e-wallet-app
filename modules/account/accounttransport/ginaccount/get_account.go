@@ -12,36 +12,6 @@ import (
 	"net/http"
 )
 
-func GetAccountByID(appCtx component.AppContext) gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		var req accountmodel.GetAccountByIDRequest
-
-		if err := ctx.ShouldBindUri(&req); err != nil {
-			panic(common.ErrInvalidRequest(err))
-			return
-		}
-
-		store := accountstore.NewSqlStore(appCtx.GetMainDBConnection())
-		repo := accountrepo.NewAccountRepo(store)
-		biz := accountbiz.NewAccountBiz(repo)
-
-		account, err := biz.GetByID(ctx.Request.Context(), req.ID)
-		if err != nil {
-			panic(err)
-			return
-		}
-		requester := ctx.MustGet(common.CurrentUser).(common.Requester)
-		if account.Username != requester.GetUsername() {
-			panic(common.ErrNoPermission(
-				fmt.Errorf("account id %d does not belong to user with username %s",
-					req.ID, requester.GetUsername())))
-			return
-		}
-
-		ctx.JSON(http.StatusOK, common.SuccessResponse(&account))
-	}
-}
-
 func GetAccountByAccountNumber(appCtx component.AppContext) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var req accountmodel.GetAccountByAccountNumberRequest

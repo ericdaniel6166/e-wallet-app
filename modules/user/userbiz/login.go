@@ -13,7 +13,9 @@ func (biz *userBiz) Login(ctx context.Context, req *usermodel.LoginRequest) (*us
 			return nil, usermodel.ErrUsernameOrPasswordInvalid
 		}
 		return nil, common.ErrInternal(err)
-
+	}
+	if user.Status == false {
+		return nil, common.ErrEntityBlocked(usermodel.EntityName, common.RecordIsBlocked)
 	}
 
 	err = common.CheckPassword(req.Password, user.HashedPassword)

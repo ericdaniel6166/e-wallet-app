@@ -4,6 +4,7 @@ import (
 	"e-wallet-app/common"
 	"e-wallet-app/component"
 	"e-wallet-app/modules/user/userbiz"
+	"e-wallet-app/modules/user/userenum"
 	"e-wallet-app/modules/user/usermodel"
 	"e-wallet-app/modules/user/userrepo"
 	"e-wallet-app/modules/user/userstore"
@@ -20,6 +21,8 @@ func CreateUser(appCtx component.AppContext) gin.HandlerFunc {
 			panic(common.ErrInvalidRequest(err))
 			return
 		}
+		req.FillDefault()
+		req.Role = int32(userenum.RoleUser)
 
 		store := userstore.NewSqlStore(appCtx.GetMainDBConnection())
 		repo := userrepo.NewUserRepo(store)
@@ -36,6 +39,7 @@ func CreateUser(appCtx component.AppContext) gin.HandlerFunc {
 			panic(common.ErrInternal(err))
 			return
 		}
+		res.Role = userenum.Role(user.Role)
 
 		ctx.JSON(http.StatusOK, common.SuccessResponse(&res))
 	}
