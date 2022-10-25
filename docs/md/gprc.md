@@ -1,0 +1,43 @@
+##### gPRC
+- gPRC (Google Remote Procedure Call)
+    - Remote Procedure Call Framework
+      - The client can execute a remote procedure on the server 
+      - The remote interaction code is handled by gPRC 
+      - The API & data structure code is automatically generated 
+      - Support multiple programming languages 
+    - Originally developed by Google
+      - Now is part of CNCF (Cloud Native Computing Foundation) 
+- Works
+    - Define API & data structure
+      - The RPC and its request/response structure are defined using protobuf  
+    - Generate gRPC stubs  
+      - Generate codes for the server and client in the language of your choice
+    - Implement the server
+      - Implement the gPRC handler on the server side
+    - Use the client
+      - Use the generated client stubs to call the RPC on the server
+- 3 Why 
+  - High performance
+    - HTTP/2: binary framing, multiplexing, header compression, bidirectional communication 
+  - Strong API contract
+    - Server & client share the same protobuf RPC definition with strongly typed data
+  - Automatic code generation
+    - Codes that serialize/deserialize data, or transfer data between client & server are automatically generated
+- 4 Types
+  - Unary gRPC 
+    - The client sends 1 request, and the server replies with 1 response (same as normal HTTP API) 
+  - Client streaming gPRC
+    - The client sends a stream of messages, and the server replies with 1 response
+  - Server streaming gPRC
+    - The client sends 1 request, and the server replies with a stream of messages
+  - Bidirectional streaming gPRC
+    - The client sends a stream of messages, and the server replies with a stream of messages,
+    in parallel and with arbitrary order
+- gRPC Gateway
+  - Serve both gRPC and HTTP requests at once
+    - A plugin of protobuf compiler 
+    - Generate proxy codes from protobuf
+    - Translate HTTP JSON calls to gPRC
+      - In-process translation: only for unary 
+      - Separate proxy server: both unary and streaming
+    - Write code once, serve both gRPC and HTTP requests

@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package protogen;
+
+import "rpc_create_user.proto";
+import "rpc_login.proto";
+
+option go_package = "e-wallet-app/protogen";
+
+service EWalletApp {
+  rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {}
+  rpc Login (LoginRequest) returns (LoginResponse) {}
+}

@@ -40,6 +40,8 @@ func CreateUser(appCtx component.AppContext) gin.HandlerFunc {
 			return
 		}
 		res.Role = userenum.Role(user.Role)
+		res.CreatedAt = user.CreatedAt
+		res.UpdatedAt = user.UpdatedAt
 
 		ctx.JSON(http.StatusOK, common.SuccessResponse(&res))
 	}

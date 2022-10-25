@@ -70,5 +70,6 @@
 - [Docker](docker.md)
 - [Kubernetes](kubernetes.md)
 - [AWS](aws.md)
+- [gPRC](gprc.md)
 - ./wait-for 
   - a script designed to synchronize services like docker containers. 
