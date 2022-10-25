@@ -48,4 +48,16 @@ docker_network:
 docker_run:
 	docker run --name e-wallet-app-v1 --network e-wallet-app-network -p 8080:8080 -e GIN_MODE=release -e DB_SOURCE="postgresql://root:123456789@e-wallet-app-postgres:5432/e_wallet_app_v1?sslmode=disable" e-wallet-app:latest
 
-.PHONY: postgres_run create_db drop_db migrate_up migrate_up_1 migrate_down migrate_down_1 migrate_create sqlc_generate sqlc_compile test server docker_build aws_migrate_up
+proto_generate_win:
+	del /f protogen\*.go
+	protoc --proto_path=proto --go_out=protogen --go_opt=paths=source_relative \
+	--go-grpc_out=protogen --go-grpc_opt=paths=source_relative \
+	proto/*.proto
+
+proto_generate:
+	rm -f protogen/*.go
+	protoc --proto_path=proto --go_out=protogen --go_opt=paths=source_relative \
+	--go-grpc_out=protogen --go-grpc_opt=paths=source_relative \
+	proto/*.proto
+
+.PHONY: proto_generate_win proto_generate postgres_run create_db drop_db migrate_up migrate_up_1 migrate_down migrate_down_1 migrate_create sqlc_generate sqlc_compile test server docker_build aws_migrate_up

@@ -1,6 +1,9 @@
 package usermodel
 
-import "e-wallet-app/modules/user/userenum"
+import (
+	"e-wallet-app/modules/user/userenum"
+	"time"
+)
 
 type CreateUserRequest struct {
 	Username string `json:"username" binding:"required,username"`
@@ -11,10 +14,12 @@ type CreateUserRequest struct {
 }
 
 type CreateUserResponse struct {
-	Username string `json:"username"`
-	FullName string `json:"full_name"`
-	Email    string `json:"email"`
-	Role     userenum.Role
+	Username  string        `json:"username"`
+	FullName  string        `json:"full_name"`
+	Email     string        `json:"email"`
+	Role      userenum.Role `json:"role"`
+	UpdatedAt time.Time     `json:"updated_at"`
+	CreatedAt time.Time     `json:"created_at"`
 }
 
 func (req *CreateUserRequest) FillDefault() {

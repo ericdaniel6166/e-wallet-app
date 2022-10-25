@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package protogen;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "e-wallet-app/protogen";
+
+message CreateUserRequest {
+  string username = 1;
+  string password = 2;
+  string full_name = 3;
+  string email = 4;
+}
+
+message CreateUserResponse {
+  string username = 1;
+  string full_name = 2;
+  string email = 3;
+  google.protobuf.Timestamp updated_at = 4;
+  google.protobuf.Timestamp created_at = 5;
+}
