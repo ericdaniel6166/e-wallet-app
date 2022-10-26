@@ -59,6 +59,8 @@
   - Unit test
 - gomock
   - mocking framework
+- Evans CLI
+  -  a gRPC client that allows you to construct and send requests to gRPC server in an interactive shell
 - CI-CD (Github Actions)
 - cert-manager
   - it adds certificates and certificate issuers as resource types in Kubernetes clusters 

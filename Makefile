@@ -60,4 +60,7 @@ proto_generate:
 	--go-grpc_out=protogen --go-grpc_opt=paths=source_relative \
 	proto/*.proto
 
-.PHONY: proto_generate_win proto_generate postgres_run create_db drop_db migrate_up migrate_up_1 migrate_down migrate_down_1 migrate_create sqlc_generate sqlc_compile test server docker_build aws_migrate_up
+evans:
+	evans --host localhost --port 8081 -r repl
+
+.PHONY: evans proto_generate_win proto_generate postgres_run create_db drop_db migrate_up migrate_up_1 migrate_down migrate_down_1 migrate_create sqlc_generate sqlc_compile test server docker_build aws_migrate_up
