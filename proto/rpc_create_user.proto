@@ -11,12 +11,14 @@ message CreateUserRequest {
   string password = 2;
   string full_name = 3;
   string email = 4;
+  int32 role = 5;
 }
 
 message CreateUserResponse {
   string username = 1;
   string full_name = 2;
   string email = 3;
-  google.protobuf.Timestamp updated_at = 4;
-  google.protobuf.Timestamp created_at = 5;
+  string app_role = 4;
+  google.protobuf.Timestamp updated_at = 5;
+  google.protobuf.Timestamp created_at = 6;
 }
