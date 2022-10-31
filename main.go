@@ -7,7 +7,7 @@ import (
 	"e-wallet-app/grpcapi"
 	"e-wallet-app/middleware"
 	"e-wallet-app/protogen"
-	"e-wallet-app/routing"
+	"e-wallet-app/router"
 	"e-wallet-app/val"
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
@@ -68,8 +68,8 @@ func runGinService(appCtx component.AppContext) error {
 
 	v := r.Group(appCtx.Version())
 
-	routing.AccountRouter(appCtx, v)
-	routing.UserRouter(appCtx, v)
+	router.AccountRouter(appCtx, v)
+	router.UserRouter(appCtx, v)
 
 	return r.Run(appCtx.HttpServerAddress())
 
