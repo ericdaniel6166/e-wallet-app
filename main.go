@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"e-wallet-app/appconfig"
 	"e-wallet-app/component"
@@ -10,11 +11,14 @@ import (
 	"e-wallet-app/router"
 	"e-wallet-app/val"
 	"github.com/gin-gonic/gin"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	_ "github.com/lib/pq"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
+	"google.golang.org/protobuf/encoding/protojson"
 	"log"
 	"net"
+	"net/http"
 )
 
 func main() {
@@ -34,6 +38,16 @@ func main() {
 	//	log.Fatalln(err)
 	//}
 
+	go func() {
+		//if err := runGinService(appCtx); err != nil {
+		//	log.Fatal(err)
+		//}
+		if err := runGatewayService(appCtx); err != nil {
+			log.Fatal(err)
+		}
+
+	}()
+
 	if err = runGrpcService(appCtx); err != nil {
 		log.Fatalln(err)
 	}
@@ -50,11 +64,44 @@ func runGrpcService(appCtx component.AppContext) error {
 	reflection.Register(grpcServer)
 	listener, err := net.Listen("tcp", appCtx.GrpcServerAddress())
 	if err != nil {
+		log.Printf("cannot create listener %s", err.Error())
 		return err
 	}
 	log.Printf("start gRPC server at %s", listener.Addr().String())
 
 	return grpcServer.Serve(listener)
+}
+
+func runGatewayService(appCtx component.AppContext) error {
+	server, err := grpcapi.NewServer(appCtx)
+
+	jsonOption := runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{
+		MarshalOptions: protojson.MarshalOptions{
+			UseProtoNames: true,
+		},
+		UnmarshalOptions: protojson.UnmarshalOptions{
+			DiscardUnknown: true,
+		},
+	})
+
+	grpcMux := runtime.NewServeMux(jsonOption)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	err = protogen.RegisterEWalletAppHandlerServer(ctx, grpcMux, server)
+	if err != nil {
+		log.Printf("cannot register handler server: %s", err.Error())
+		return err
+	}
+	mux := http.NewServeMux()
+	mux.Handle("/", grpcMux)
+
+	listener, err := net.Listen("tcp", appCtx.HttpServerAddress())
+	if err != nil {
+		log.Printf("cannot create listener: %s", err.Error())
+		return err
+	}
+	log.Printf("start HTTP gateway at %s", listener.Addr().String())
+	return http.Serve(listener, mux)
 }
 
 func runGinService(appCtx component.AppContext) error {
